@@ -70,25 +70,7 @@ function fetchAssoc($mysqliQuery)
 {
     return mysqli_fetch_all($mysqliQuery, MYSQLI_ASSOC);
 }
-function autoNumber($namaTabel, $field, $type = '', $lengNumber)
-{
-    $query = "SELECT $field FROM $namaTabel";
-    $result = fetchAssoc(query($query));
-    $autoNumber = 0;
-    if (is_null($result)) {
-        $autoNumber = 1;
-    } else {
-        $autoNumber = count($result) + 1;
-    }
 
-    $number = $lengNumber - strlen($autoNumber);
-    $value = '';
-    for ($i = 0; $i < $number; $i++) {
-        $value .= '0';
-    }
-
-    return $type . $value . $autoNumber;
-}
 function getUsername($username)
 {
     $query = "SELECT `username` FROM `1819123_akses` WHERE username = '$username'";
@@ -119,7 +101,34 @@ function getAllDataDivisi()
 function tambahDataDivsi($namaDivisi, $alamatDivisi, $noTelpDivisi)
 {
     // contoh hasil nya D001
-    $idDivisi = filter(autoNumber('1819123_divisi', '1819123_IdDivisi', 'D', 3));
-    $query = "INSERT INTO `1819123_divisi`(`1819123_IdDivisi`, `1819123_NmDivisi`, `1819123_Alamat`, `1819123_NoTelp`) VALUES ('$idDivisi', '$namaDivisi', '$alamatDivisi', '$noTelpDivisi')";
+    $query = "INSERT INTO `1819123_divisi`(`1819123_IdDivisi`, `1819123_NmDivisi`, `1819123_Alamat`, `1819123_NoTelp`) VALUES ('', '$namaDivisi', '$alamatDivisi', '$noTelpDivisi')";
     return query($query);
+}
+
+// hapus data divisi berdasarkan 1819123_IdDivisi
+function hapusDivisiById($idDivisi)
+{
+    $query = "DELETE FROM `1819123_divisi` WHERE `1819123_IdDivisi` = '$idDivisi'";
+    return query($query);
+}
+
+// get data divisi bersarkan 1819123_IdDivisi
+function getDataDivisiById($idDivisi)
+{
+    $query = "SELECT * FROM `1819123_divisi` WHERE `1819123_IdDivisi` = '$idDivisi'";
+    return fetchAssoc(query($query));
+}
+
+// update data divisi
+function updateDataDivsi($namaDivisi, $alamatDivisi, $noTelpDivisi, $idDivisi)
+{
+    $query = "UPDATE `1819123_divisi` SET `1819123_NmDivisi` = '$namaDivisi', `1819123_Alamat` = '$alamatDivisi', `1819123_NoTelp` = '$noTelpDivisi' WHERE `1819123_IdDivisi` = '$idDivisi'";
+    return query($query);
+}
+// cari data divisi
+function cariDivisi($cari)
+{
+    // ambil seluruh data divisi berdasarkan pencarian
+    $query = "SELECT * FROM `1819123_divisi` WHERE `1819123_NmDivisi` LIKE '%$cari%' OR `1819123_Alamat` LIKE '%$cari%' OR `1819123_NoTelp` LIKE '%$cari%'";
+    return fetchAssoc(query($query));
 }
