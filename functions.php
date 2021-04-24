@@ -132,3 +132,44 @@ function cariDivisi($cari)
     $query = "SELECT * FROM `1819123_divisi` WHERE `1819123_NmDivisi` LIKE '%$cari%' OR `1819123_Alamat` LIKE '%$cari%' OR `1819123_NoTelp` LIKE '%$cari%'";
     return fetchAssoc(query($query));
 }
+
+function getAllDataJasa()
+{
+    // ambil seluruh data divisi
+    $query = "SELECT * FROM `1819123_jasa`";
+    return fetchAssoc(query($query));
+}
+
+function tambahDataJasa($namaJasa, $lamaJasa, $hargaJasa)
+{
+    $query = "INSERT INTO `1819123_jasa`(`1819123_KdJasa`, `1819123_NmJasa`, `1819123_LamaJasa`, `1819123_HrgJasa`) VALUES ('',  '$namaJasa', '$lamaJasa', '$hargaJasa')";
+    return query($query);
+}
+
+function getDataJasaById($kdJasa)
+{
+    $query = "SELECT * FROM `1819123_jasa` WHERE `1819123_KdJasa` = '$kdJasa'";
+    return fetchAssoc(query($query));
+}
+
+// update data jasa
+function updateDataJasa($namaJasa, $lamaJasa, $hargaJasa, $kdJasa)
+{
+    $query = "UPDATE `1819123_jasa` SET `1819123_NmJasa` = '$namaJasa', `1819123_LamaJasa` = '$lamaJasa',`1819123_HrgJasa` = '$hargaJasa' WHERE `1819123_KdJasa` = '$kdJasa'";
+    return query($query);
+}
+
+// hapus data jasa berdasarkan 1819123_KdJasa
+function hapusJasaById($kdJasa)
+{
+    $query = "DELETE FROM `1819123_jasa` WHERE `1819123_KdJasa` = '$kdJasa'";
+    return query($query);
+}
+
+// cari data jasa
+function cariJasa($cari)
+{
+    // ambil seluruh data divisi berdasarkan pencarian
+    $query = "SELECT * FROM `1819123_jasa` WHERE `1819123_NmJasa` LIKE '%$cari%' OR `1819123_LamaJasa` LIKE '%$cari%' OR `1819123_HrgJasa` LIKE '%$cari%'";
+    return fetchAssoc(query($query));
+}

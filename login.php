@@ -63,13 +63,13 @@ if (isset($_POST['add-user'])) {
 				if ($hakAksesDiDatabase == 'admin') {
 					//buat session hak akses admin
 					$_SESSION['hak-akses'] = 'admin';
-					$_SESSION['message'] = 'Selamat Anda Berhasil Login Sebagai Admin';
+					$_SESSION['message'] = "Selamat $username Anda Berhasil Login Sebagai Admin";
 					$_SESSION['username'] = $username;
 					redirect('form-admin');
 				} else {
 					//buat session hak akses staff
 					$_SESSION['hak-akses'] = 'staff';
-					$_SESSION['message'] = 'Selamat Anda Berhasil Login Sebagai Staff';
+					$_SESSION['message'] = "Selamat $username Anda Berhasil Login Sebagai Staff";
 					$_SESSION['username'] = $username;
 					redirect('form-admin');
 				}
