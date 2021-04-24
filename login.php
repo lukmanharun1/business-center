@@ -63,13 +63,13 @@ if (isset($_POST['add-user'])) {
 				if ($hakAksesDiDatabase == 'admin') {
 					//buat session hak akses admin
 					$_SESSION['hak-akses'] = 'admin';
-					$_SESSION['message'] = "Selamat $username Anda Berhasil Login Sebagai Admin";
+					$_SESSION['message'] = "$username Anda Berhasil Login Sebagai Admin";
 					$_SESSION['username'] = $username;
 					redirect('form-admin');
 				} else {
 					//buat session hak akses staff
 					$_SESSION['hak-akses'] = 'staff';
-					$_SESSION['message'] = "Selamat $username Anda Berhasil Login Sebagai Staff";
+					$_SESSION['message'] = "$username Anda Berhasil Login Sebagai Staff";
 					$_SESSION['username'] = $username;
 					redirect('form-admin');
 				}
@@ -116,13 +116,27 @@ if (isset($status)) {
 else if (isset($berhasil)) {
 	echo '<script>
 						swal({
-						title: "success",
+						title: "Selamat ..",
 						text: " ' . $berhasil . ' ",
 						icon: "success",
 					});
 				</script>';
 	// hapus variabel
 	unset($berhasil);
+}
+// logout
+// cek apakah variabel berhasil ada?
+// kalau ada tampilkan
+else if (isset($_COOKIE['logout'])) {
+	echo '<script>
+						swal({
+						title: "Selamat ..",
+						text: " ' . $_COOKIE['logout'] . ' ",
+						icon: "success",
+					});
+				</script>';
+	// hapus variabel
+	setcookie('logout', '');
 }
 
 ?>

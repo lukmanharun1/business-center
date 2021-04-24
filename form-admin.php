@@ -3,7 +3,7 @@
 session_start();
 require_once 'functions.php';
 // cek session login untuk admin
-if (empty($_SESSION['admin'])) {
+if (empty($_SESSION['hak-akses']) == 'admin') {
   redirect('login');
 } else if (isset($_SESSION['username'])) {
   $username = $_SESSION['username'];
@@ -89,7 +89,7 @@ if (isset($_SESSION['message'])) {
   echo '
           <script>
             swal({
-              title: "success",
+              title: "Selamat ..",
               text: " ' . $_SESSION['message'] . ' ",
               icon: "success",
             });
@@ -115,7 +115,7 @@ if (isset($status)) {
 else if (isset($berhasil)) {
   echo '<script>
 						swal({
-						title: "success",
+						title: "Selamat ..",
 						text: " ' . $berhasil . ' ",
 						icon: "success",
 					});
@@ -125,7 +125,7 @@ else if (isset($berhasil)) {
 } else if (isset($_SESSION['berhasil'])) {
   echo '<script>
 						swal({
-						title: "success",
+						title: "Selamat ..",
 						text: " ' . $_SESSION['berhasil'] . ' ",
 						icon: "success",
 					});
@@ -202,8 +202,8 @@ else if (isset($berhasil)) {
     <div class="navbar-nav">
       <a class="nav-link active" href="#">Divisi <span class="sr-only">(current)</span></a>
       <a class="nav-link" href="jasa.php">Jasa</a>
-      <a class="nav-link" href="#">Pesanan</a>
-      <a class="nav-link" href="#">Cetak Nota</a>
+      <a class="nav-link" href="pesanan.php">Pesanan</a>
+      <a class="nav-link" href="cetak-nota.php">Cetak Nota</a>
     </div>
   </div>
   <span class="navbar-text text-white mr-5">

@@ -3,7 +3,7 @@
 session_start();
 require_once 'functions.php';
 // cek session login untuk admin
-if (empty($_SESSION['admin'])) {
+if (empty($_SESSION['hak-akses']) == 'admin') {
   redirect('login');
 } else if (isset($_SESSION['username'])) {
   $username = $_SESSION['username'];
@@ -13,15 +13,24 @@ if (isset($_POST['tambah'])) {
   $namaJasa = filter($_POST['nama-jasa']);
   $lamaJasa = filter($_POST['lama-jasa']);
   $hargaJasa = filter($_POST['harga-jasa']);
-
-  $tambahDataJasa = tambahDataJasa($namaJasa, $lamaJasa, $hargaJasa);
-  // cek apakah berhasil
-  if ($tambahDataJasa) {
-    $berhasil = 'Data Jasa Berhasil Ditambahkan';
+  if (strlen($namaJasa) < 3) {
+    $status = 'Nama Jasa Minimal 3 huruf';
+  } else if ((int) $lamaJasa < 0) {
+    $status = 'Pastikan Minimal Lama jasa 0 hari';
+    // cek validasi minimal harga jasa 1000
+  } else if ((int) $hargaJasa < 1000) {
+    $status = 'Minimal Harga Jasa Rp.1000';
   } else {
-    $status = 'Data Jasa Gagal Ditambahkan';
+    $tambahDataJasa = tambahDataJasa($namaJasa, $lamaJasa, $hargaJasa);
+    // cek apakah berhasil
+    if ($tambahDataJasa) {
+      $berhasil = 'Data Jasa Berhasil Ditambahkan';
+    } else {
+      $status = 'Data Jasa Gagal Ditambahkan';
+    }
   }
 }
+
 
 // ketika tombol update diklik
 if (isset($_POST['update'])) {
@@ -30,14 +39,25 @@ if (isset($_POST['update'])) {
   $lamaJasa = filter($_POST['lama-jasa']);
   $hargaJasa = filter($_POST['harga-jasa']);
 
-  $updateDataJasa = updateDataJasa($namaJasa, $lamaJasa, $hargaJasa, $kdJasa);
-  // cek apakah berhasil
-  if ($updateDataJasa) {
-    $berhasil = 'Data Jasa Berhasil Diupdate';
+  if (strlen($namaJasa) < 3) {
+    $status = 'Nama Jasa Minimal 3 huruf';
+  } else if ((int) $lamaJasa < 0) {
+    $status = 'Pastikan Minimal Lama jasa 0 hari';
+    // cek validasi minimal harga jasa 1000
+  } else if ((int) $hargaJasa < 1000) {
+    $status = 'Minimal Harga Jasa Rp.1000';
   } else {
-    $status = 'Data Jasa Gagal Diupdate';
+
+    $updateDataJasa = updateDataJasa($namaJasa, $lamaJasa, $hargaJasa, $kdJasa);
+    // cek apakah berhasil
+    if ($updateDataJasa) {
+      $berhasil = 'Data Jasa Berhasil Diupdate';
+    } else {
+      $status = 'Data Jasa Gagal Diupdate';
+    }
   }
 }
+
 $getAllDataJasa = getAllDataJasa();
 
 
@@ -49,7 +69,7 @@ if (isset($_SESSION['message'])) {
   echo '
           <script>
             swal({
-              title: "success",
+              title: "Selamat ..",
               text: " ' . $_SESSION['message'] . ' ",
               icon: "success",
             });
@@ -75,7 +95,7 @@ if (isset($status)) {
 else if (isset($berhasil)) {
   echo '<script>
 						swal({
-						title: "success",
+						title: "Selamat ..",
 						text: " ' . $berhasil . ' ",
 						icon: "success",
 					});
@@ -85,7 +105,7 @@ else if (isset($berhasil)) {
 } else if (isset($_SESSION['berhasil'])) {
   echo '<script>
 						swal({
-						title: "success",
+						title: "Selamat ..",
 						text: " ' . $_SESSION['berhasil'] . ' ",
 						icon: "success",
 					});
@@ -162,8 +182,8 @@ else if (isset($berhasil)) {
     <div class="navbar-nav">
       <a class="nav-link" href="form-admin.php">Divisi <span class="sr-only">(current)</span></a>
       <a class="nav-link active" href="jasa.php">Jasa</a>
-      <a class="nav-link" href="#">Pesanan</a>
-      <a class="nav-link" href="#">Cetak Nota</a>
+      <a class="nav-link" href="pesanan.php">Pesanan</a>
+      <a class="nav-link" href="cetak-nota.php">Cetak Nota</a>
     </div>
   </div>
   <span class="navbar-text text-white mr-5">
@@ -176,7 +196,7 @@ else if (isset($berhasil)) {
 </nav>
 <!-- END: navbar -->
 
-<h1 class="text-center mt-3">Form Entry Jasa</h1>
+<h1 class="text-center mt-3">Form Entry Data Jasa</h1>
 
 <div class="container mt-3">
   <!-- Button trigger modal -->
@@ -186,7 +206,7 @@ else if (isset($berhasil)) {
       <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff">
         <path d="M0 0h24v24H0V0z" fill="none" />
         <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-      </svg> Tambah Entry Jasa
+      </svg> Tambah Entry Data Jasa
     </button>
     <!-- cari Jasa -->
     <div class="col-md-5">

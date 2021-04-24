@@ -3,7 +3,7 @@ session_start();
 require_once 'functions.php';
 
 // cek session admin
-if (empty($_SESSION['admin'])) {
+if (empty($_SESSION['hak-akses']) == 'admin') {
   redirect('login');
 } else if (isset($_GET['1819123_KdJasa'])) {
   // ambil kd jasa
