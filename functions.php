@@ -27,7 +27,7 @@ function startHTML($title = '', $includeCSS = '')
             }
             body {
                 font-family: "Montserrat", sans-serif;
-                background-image: url(tabitabi.jpg);
+                // background-image: url(tabitabi.jpg);
                 background-repeat: no-repeat;
                 background-size: auto;
             }
@@ -172,4 +172,29 @@ function cariJasa($cari)
     // ambil seluruh data divisi berdasarkan pencarian
     $query = "SELECT * FROM `1819123_jasa` WHERE `1819123_NmJasa` LIKE '%$cari%' OR `1819123_LamaJasa` LIKE '%$cari%' OR `1819123_HrgJasa` LIKE '%$cari%'";
     return fetchAssoc(query($query));
+}
+
+function cariJasaByKdJasa($kdJasa)
+{
+    $query = "SELECT * FROM `1819123_jasa` WHERE `1819123_KdJasa` = '$kdJasa'";
+    return fetchAssoc(query($query));
+}
+
+function tambahDetailPesan($kdJasa, $jumlahPesan, $hargaPesan)
+{
+    $query = "INSERT INTO `1819123_detail_pesan`(`1819123_NoSP`, `1819123_KdJasa`, `1819123_JmlPesan`, `1819123_HrgPesan`) VALUES ('', '$kdJasa', '$jumlahPesan', '$hargaPesan')";
+    return query($query);
+}
+
+function cetakPesanan()
+{
+    // join table 1819123_jasa sama 1819123_detail_pesan -> ON kd jasa
+    $query = "SELECT `1819123_detail_pesan`.`1819123_NoSP`, `1819123_jasa`.`1819123_NmJasa`, `1819123_jasa`.`1819123_LamaJasa`, `1819123_detail_pesan`.`1819123_JmlPesan`, `1819123_detail_pesan`.`1819123_HrgPesan`, `1819123_detail_pesan`.`1819123_JmlPesan` * `1819123_detail_pesan`.`1819123_HrgPesan` AS 'Jumlah_Harga' FROM `1819123_detail_pesan` INNER JOIN `1819123_jasa` ON `1819123_detail_pesan`.`1819123_KdJasa` = `1819123_jasa`.`1819123_KdJasa`";
+    return fetchAssoc(query($query));
+}
+
+function hapusPesanan($noSp)
+{
+    $query = "DELETE FROM `1819123_detail_pesan` WHERE `1819123_NoSP` = '$noSp'";
+    return query($query);
 }
