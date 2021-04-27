@@ -2,58 +2,9 @@
 // cek session admin atau staff
 session_start();
 require_once 'functions.php';
-// cek session login untuk admin
-if (empty($_SESSION['hak-akses']) == 'admin' || empty($_SESSION['hak-akses']) == 'staff') {
-  redirect('login');
-} else if (isset($_SESSION['username'])) {
-  $username = $_SESSION['username'];
-}
-// cek tombol + data jasa
-if (isset($_POST['tambahkan-jasa'])) {
-  $kdJasa = filter($_POST['kd-jasa']);
-
-  $cariJasaByKdJasa = cariJasaByKdJasa($kdJasa)[0];
-
-  $namaJasa = $cariJasaByKdJasa['1819123_NmJasa'];
-  $lamaJasa = $cariJasaByKdJasa['1819123_LamaJasa'];
-  $hargaJasa = $cariJasaByKdJasa['1819123_HrgJasa'];
-}
-// cek tombol + tambahkan pesanan
-if (isset($_POST['tambahkan-pesanan'])) {
-  $kdJasa = filter($_POST['kd-jasa']);
-  $hargaPesan = filter($_POST['harga-pesan']);
-  $jumlahPesan = filter($_POST['jumlah-pesan']);
-  // validasi harga pesan
-  if ((int) $hargaPesan < 1000) {
-    $status = 'Minimal Harga pesan Rp. 1000';
-  } else if ((int) $jumlahPesan < 1) {
-    $status = 'Minimal Jumlah pesan 1';
-  }
-  $tambahDetailPesan = tambahDetailPesan($kdJasa, $jumlahPesan, $hargaPesan);
-  // cek apakah berhasil?
-  if ($tambahDetailPesan) {
-    $berhasil = 'Data Pesanan Berhasil Ditambahkan!';
-    // untuk mengaktifkan cari divisi
-    $_SESSION['pesanan'] = 'true';
-    // set session kd jasa tipe data array
-    $valueKdJasa = json_encode([$kdJasa]);
-    $_SESSION['kd-jasa'] = $valueKdJasa;
-  } else {
-    $status = 'Data Pesanan Gagal Ditambahkan / data tidak boleh sama';
-  }
-}
-
-if (isset($_SESSION['kd-jasa'])) {
-  // ambil value kd jasa di session
-  // $kdJasa = json_decode($_SESSION['kd-jasa'], true);
-  $totalHarga = 0;
-  $cetakPesanan = cetakPesanan();
-
-  foreach ($cetakPesanan as $pesan) {
-    $totalHarga += $pesan['Jumlah_Harga'];
-  }
-}
-
+// ini untuk dimasukan pesanan di database
+$tanggalPesanan = date('Y-m-d');
+// ini untuk view
 $namaBulan = [
   '01' => 'januari',
   '02' => 'februari',
@@ -69,11 +20,108 @@ $namaBulan = [
   '12' => 'Desember'
 ];
 
-// ini untuk dimasukan di database
-$tanggalPesanan = date('d-m-Y');
-// ini untuk view
 $bulan = $namaBulan[date('m')];
-$viewTanggalPesanan = date("d-") . $bulan . date('-Y');
+$viewTanggalPesanan = date("Y-") . $bulan . date("-d");
+// cek session login untuk admin
+if (empty($_SESSION['hak-akses']) == 'admin' || empty($_SESSION['hak-akses']) == 'staff') {
+  redirect('login');
+} else if (isset($_SESSION['username'])) {
+  $username = $_SESSION['username'];
+}
+// cek tombol + data jasa
+if (isset($_POST['tambahkan-jasa'])) {
+  $kdJasa = filter($_POST['kd-jasa']);
+  $cariJasaByKdJasa = cariJasaByKdJasa($kdJasa)[0];
+
+  $namaJasa = $cariJasaByKdJasa['1819123_NmJasa'];
+  $lamaJasa = $cariJasaByKdJasa['1819123_LamaJasa'];
+  $hargaJasa = $cariJasaByKdJasa['1819123_HrgJasa'];
+}
+// cek tombol + tambahkan pesanan
+if (isset($_POST['tambahkan-pesanan'])) {
+  $kdJasa = filter($_POST['kd-jasa']);
+  $hargaPesan = filter($_POST['harga-pesan']);
+  $jumlahPesan = filter($_POST['jumlah-pesan']);
+
+  // set session kd jasa tipe data array
+  // cek apakah ada kd jasa?
+  if (isset($_SESSION['kd-jasa'])) {
+    // ambil kd jasa
+    $valueJasa = json_decode($_SESSION['kd-jasa'], true);
+    // tambahkan kd jasa
+    foreach ($valueJasa as $value) {
+      // cegat jika array nya yang sama
+      if ($kdJasa == $value) {
+        $status = 'Maaf Data duplikasi';
+      }
+    }
+
+    if (empty($status)) {
+      // set session lagi
+      $_SESSION['kd-jasa'] = json_encode($valueJasa);
+      $tambahDetailPesan = tambahDetailPesan($kdJasa, $jumlahPesan, $hargaPesan);
+
+      // cek apakah berhasil?
+      if ($tambahDetailPesan) {
+        $berhasil = 'Data Pesanan Berhasil Ditambahkan!';
+        array_push($valueJasa, $kdJasa);
+        $_SESSION['kd-jasa'] = json_encode($valueJasa);
+        // untuk mengaktifkan cari divisi
+        $_SESSION['pesanan'] = 'true';
+      } else {
+        $status = 'Data Pesanan Gagal Ditambahkan / data tidak boleh sama';
+      }
+    }
+  } else {
+    // kalau tidak ada tambahkan
+    $tambahDetailPesan = tambahDetailPesan($kdJasa, $jumlahPesan, $hargaPesan);
+
+    // cek apakah berhasil?
+    if ($tambahDetailPesan) {
+      $berhasil = 'Data Pesanan Berhasil Ditambahkan!';
+      $_SESSION['kd-jasa'] = json_encode([$kdJasa]);
+      // untuk mengaktifkan cari divisi
+      $_SESSION['pesanan'] = 'true';
+    }
+  }
+} else if (isset($_POST['tambah-data-divisi'])) {
+  $idDivisi = filter($_POST['id-divisi']);
+  $namaDivisi = filter($_POST['nama-divisi']);
+  $alamatDivisi = filter($_POST['alamat-divisi']);
+  $nomorTelp = filter($_POST['nomor-telp']);
+} else if (isset($_POST['simpan-pesan'])) {
+
+  $idDivisi = filter($_POST['id-divisi']);
+  $tambahSuratPesan = tambahSuratPesan($idDivisi, $tanggalPesanan);
+  // cek apakah berhasil ditambah?
+  if ($tambahSuratPesan) {
+    $berhasil = 'Data Pesanan Berhasil Disimpan!';
+    // lalu hapus session kd jasa
+    unset($_SESSION['kd-jasa']);
+  } else {
+    $status = 'Data Pesanan Gagal Disimpan';
+  }
+}
+
+if (isset($_SESSION['kd-jasa'])) {
+  // ambil value kd jasa di session
+  $valueJasa = json_decode($_SESSION['kd-jasa'], true);
+  $inKdJasa = implode(',', $valueJasa);
+  if ($inKdJasa !== '') {
+    $cetakPesanan = cetakPesanan($inKdJasa);
+  } else {
+    $cetakPesanan = [];
+  }
+  $totalHarga = 0;
+
+  if (count($cetakPesanan) != 0) {
+    foreach ($cetakPesanan as $pesan) {
+      $totalHarga += $pesan['Jumlah_Harga'];
+    }
+  }
+}
+
+
 
 
 ?>
@@ -105,6 +153,16 @@ else if (isset($berhasil)) {
 				</script>';
   // hapus variabel
   unset($berhasil);
+} else if (isset($_SESSION['berhasil'])) {
+  echo '<script>
+						swal({
+						title: "Selamat ..",
+						text: " ' . $_SESSION['berhasil'] . ' ",
+						icon: "success",
+					});
+				</script>';
+  // hapus variabel
+  unset($_SESSION['berhasil']);
 }
 ?>
 <style>
@@ -137,6 +195,11 @@ else if (isset($berhasil)) {
 
   table.table thead tr th {
     border: 1px solid #28a745;
+  }
+
+  .tombol-logout:hover {
+    color: #28a745 !important;
+    background-color: #ededed;
   }
 
   .tombol-hapus:hover {
@@ -187,7 +250,7 @@ else if (isset($berhasil)) {
           <path d="M0 0h24v24H0V0z" fill="none" />
           <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
         </svg>
-        <input type="text" class="form-control mb-4" id="cari-jasa" placeholder="cari nama | lama | harga jasa" />
+        <input type="text" class="form-control mb-4" id="cari-jasa" placeholder="cari nama | lama | harga jasa" autofocus />
       </div>
       <form action="" method="POST">
         <!-- nama jasa -->
@@ -291,9 +354,13 @@ else if (isset($berhasil)) {
           <path d="M0 0h24v24H0V0z" fill="none" />
           <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
         </svg>
-        <input type="text" class="form-control mb-4" id="cari-divisi" placeholder="cari nama | alamat | telpon divisi" <?= isset($_SESSION['pesanan']) ? '' : 'disabled'; ?> />
+        <input type="text" class="form-control mb-4" id="cari-divisi" placeholder="cari nama | alamat | telpon divisi" <?= (!isset($_SESSION['pesanan'])) ? 'disabled' : '' ?> />
       </div>
       <form action="" method="POST">
+        <!-- no sp -->
+
+        <!-- id divisi -->
+        <input type="hidden" name="id-divisi" value="<?= isset($idDivisi) ? $idDivisi : ''; ?>">
         <!-- nama divisi -->
         <div class="form-group position-relative">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#28a745" class="form-icon">
@@ -301,7 +368,7 @@ else if (isset($berhasil)) {
             <path d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
           </svg>
           <label for="nama-divisi">Nama Divisi</label>
-          <input type="text" class="form-control" name="nama-divisi" id="nama-divisi" disabled required />
+          <input type="text" class="form-control" id="nama-divisi" value="<?= isset($namaDivisi) ? $namaDivisi : ''; ?>" disabled required />
         </div>
         <!-- alamat divisi -->
         <div class="form-group position-relative">
@@ -310,7 +377,7 @@ else if (isset($berhasil)) {
             <path d="m256 0c-108.81 0-197.333 88.523-197.333 197.333 0 61.198 31.665 132.275 94.116 211.257 45.697 57.794 90.736 97.735 92.631 99.407 6.048 5.336 15.123 5.337 21.172 0 1.895-1.672 46.934-41.613 92.631-99.407 62.451-78.982 94.116-150.059 94.116-211.257 0-108.81-88.523-197.333-197.333-197.333zm0 474.171c-38.025-36.238-165.333-165.875-165.333-276.838 0-91.165 74.168-165.333 165.333-165.333s165.333 74.168 165.333 165.333c0 110.963-127.31 240.602-165.333 276.838z" />
             <path d="m378.413 187.852-112-96c-5.992-5.136-14.833-5.136-20.825 0l-112 96c-6.709 5.75-7.486 15.852-1.735 22.561s15.852 7.486 22.561 1.735l13.586-11.646v79.498c0 8.836 7.164 16 16 16h144c8.836 0 16-7.164 16-16v-79.498l13.587 11.646c6.739 5.777 16.836 4.944 22.561-1.735 5.751-6.709 4.974-16.81-1.735-22.561zm-66.413 76.148h-112v-90.927l56-48 56 48z" />
           </svg>
-          <textarea name="alamat-divisi" class="form-control" id="alamat-divisi" cols="5" rows="3" disabled minlength="25" required></textarea>
+          <textarea class="form-control" id="alamat-divisi" cols="5" rows="3" disabled minlength="25" required><?= isset($alamatDivisi) ? $alamatDivisi : ''; ?></textarea>
         </div>
         <!-- nomor telp -->
         <div class="form-group position-relative">
@@ -318,9 +385,9 @@ else if (isset($berhasil)) {
             <path d="m367.988 512.021c-16.528 0-32.916-2.922-48.941-8.744-70.598-25.646-136.128-67.416-189.508-120.795s-95.15-118.91-120.795-189.508c-8.241-22.688-10.673-46.108-7.226-69.612 3.229-22.016 11.757-43.389 24.663-61.809 12.963-18.501 30.245-33.889 49.977-44.5 21.042-11.315 44.009-17.053 68.265-17.053 7.544 0 14.064 5.271 15.645 12.647l25.114 117.199c1.137 5.307-.494 10.829-4.331 14.667l-42.913 42.912c40.482 80.486 106.17 146.174 186.656 186.656l42.912-42.913c3.838-3.837 9.361-5.466 14.667-4.331l117.199 25.114c7.377 1.581 12.647 8.101 12.647 15.645 0 24.256-5.738 47.224-17.054 68.266-10.611 19.732-25.999 37.014-44.5 49.977-18.419 12.906-39.792 21.434-61.809 24.663-6.899 1.013-13.797 1.518-20.668 1.519zm-236.349-479.321c-31.995 3.532-60.393 20.302-79.251 47.217-21.206 30.265-26.151 67.49-13.567 102.132 49.304 135.726 155.425 241.847 291.151 291.151 34.641 12.584 71.866 7.64 102.132-13.567 26.915-18.858 43.685-47.256 47.217-79.251l-95.341-20.43-44.816 44.816c-4.769 4.769-12.015 6.036-18.117 3.168-95.19-44.72-172.242-121.772-216.962-216.962-2.867-6.103-1.601-13.349 3.168-18.117l44.816-44.816z" />
           </svg>
           <label for="nomor-telp">Nomor Telp</label>
-          <input type="number" class="form-control" name="nomor-telp" id="nomor-telp" disabled required />
+          <input type="number" class="form-control" name="nomor-telp" value="<?= isset($nomorTelp) ? $nomorTelp : ''; ?>" id="nomor-telp" disabled required />
         </div>
-        <button type="submit" class="btn btn-success btn-sm my-3" disabled>
+        <button type="submit" name="simpan-pesan" class="btn btn-success btn-sm my-3" <?= isset($namaDivisi) ? '' : 'disabled'; ?>>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff">
             <path d="M0 0h24v24H0V0z" fill="none" />
             <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6z" />
@@ -350,28 +417,30 @@ else if (isset($berhasil)) {
       </tr>
     </thead>
     <tbody>
-      <?php foreach ($cetakPesanan as $i => $pesan) : ?>
+      <?php if (isset($_SESSION['kd-jasa'])) : ?>
+        <?php foreach ($cetakPesanan as $i => $pesan) : ?>
 
-        <tr>
-          <td><?= ++$i; ?></td>
-          <td>
-            <a href="hapus-pesanan.php?no-sp=<?= $pesan['1819123_NoSP']; ?>" class="btn btn-success btn-sm tombol-hapus">
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff" class="tombol-hapus">
-                <path d="M0 0h24v24H0V0z" fill="none" class="tombol-hapus" />
-                <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z" class="tombol-hapus" />
-              </svg>
-            </a>
-          </td>
-          <td><?= $pesan['1819123_NmJasa']; ?></td>
-          <td><?= $pesan['1819123_LamaJasa']; ?> Hari</td>
-          <td><?= $pesan['1819123_JmlPesan']; ?></td>
-          <td>Rp. <?= $pesan['1819123_HrgPesan']; ?></td>
-          <td>Rp. <?= $pesan['Jumlah_Harga']; ?></td>
-        </tr>
-      <?php endforeach; ?>
+          <tr>
+            <td><?= ++$i; ?></td>
+            <td>
+              <a data-kdjasa="<?= $pesan['1819123_KdJasa']; ?>" class="btn btn-success btn-sm tombol-hapus">
+                <svg xmlns="http://www.w3.org/2000/svg" data-kdjasa="<?= $pesan['1819123_KdJasa']; ?>" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff" class="tombol-hapus">
+                  <path d="M0 0h24v24H0V0z" fill="none" data-kdjasa="<?= $pesan['1819123_KdJasa']; ?>" class="tombol-hapus" />
+                  <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z" class="tombol-hapus" data-kdjasa="<?= $pesan['1819123_KdJasa']; ?>" />
+                </svg>
+              </a>
+            </td>
+            <td><?= $pesan['1819123_NmJasa']; ?></td>
+            <td><?= $pesan['1819123_LamaJasa']; ?> Hari</td>
+            <td><?= $pesan['1819123_JmlPesan']; ?></td>
+            <td>Rp. <?= $pesan['1819123_HrgPesan']; ?></td>
+            <td>Rp. <?= $pesan['Jumlah_Harga']; ?></td>
+          </tr>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </tbody>
   </table>
-  <h6 class="text-right mr-5">Total Harga : Rp. <b class="text-success"><?= $totalHarga ? $totalHarga : '0'; ?></b></h6>
+  <h6 class="text-right mr-5">Total Harga : Rp. <b class="text-success"><?= isset($totalHarga) ? $totalHarga : '0'; ?></b></h6>
 </div>
 
 <?php require_once 'footer.php'; ?>

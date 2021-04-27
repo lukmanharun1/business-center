@@ -5,11 +5,20 @@ require_once 'functions.php';
 // cek session login untuk admin
 if (empty($_SESSION['hak-akses']) == 'admin' || empty($_SESSION['hak-akses']) == 'staff') {
   redirect('login');
-} else if (isset($_GET['no-sp'])) {
-  $noSp = filter($_GET['no-sp']);
-  $hapusPesanan = hapusPesanan($noSp);
+} else if (isset($_GET['kd-jasa'])) {
+  $kdJasa = filter($_GET['kd-jasa']);
+  $hapusPesanan = hapusPesanan($kdJasa);
   // cek apakah berhasil dihapus
   if ($hapusPesanan) {
+    // ambil session kd jasa
+    $sessionKdJasa = json_decode($_SESSION['kd-jasa'], true);
+    // lalu hapus kd jasa tertentu
+    if (($key = array_search($kdJasa, $sessionKdJasa)) !== false) {
+      unset($sessionKdJasa[$key]);
+    }
+    $sessionKdJasa = array_unique($sessionKdJasa);
+    // set session kd jasa
+    $_SESSION['kd-jasa'] = json_encode($sessionKdJasa);
     $_SESSION['berhasil'] = 'Data Pesanan Berhasil Dihapus';
     redirect('pesanan');
   } else {
