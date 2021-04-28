@@ -1,7 +1,12 @@
 <?php
 // cek session admin atau staff
 session_start();
+
 require_once 'functions.php';
+// cek session admin atau staff
+if (!middleware('staff')) {
+  redirect('login');
+}
 // ini untuk dimasukan pesanan di database
 $tanggalPesanan = date('d-m-Y');
 // ini untuk view
@@ -39,6 +44,7 @@ foreach ($getAllNota as $i => $divisi) {
   // array_push($dataDivisi, $divisi['1819123_NoTelp']);
   $dataDivisi = [
     $i => [
+      '1819123_NoSP' => $divisi['1819123_NoSP'],
       '1819123_TglSP' => $divisi['1819123_TglSP'],
       '1819123_NmDivisi' => $divisi['1819123_NmDivisi'],
       '1819123_Alamat' => $divisi['1819123_Alamat'],
@@ -46,7 +52,6 @@ foreach ($getAllNota as $i => $divisi) {
     ]
   ];
 }
-var_dump($getAllNota);
 ?>
 
 <?= startHTML('Cetak Nota', '<script src="sweetalert.min.js"></script>'); ?>
@@ -133,7 +138,7 @@ else if (isset($berhasil)) {
 
 <!-- START: navbar -->
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #28a745;">
-  <a class="navbar-brand" href="form-admin.php">
+  <a class="navbar-brand" href="divisi.php">
     <img src="logo.png" alt="logo metik" width="60" height="50" />
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -141,8 +146,12 @@ else if (isset($berhasil)) {
   </button>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav">
-      <a class="nav-link" href="form-admin.php">Divisi <span class="sr-only">(current)</span></a>
+    <!-- START: khusus halaman admin -->
+    <?php if (middleware('admin')) : ?>
+      <a class="nav-link" href="divisi.php">Divisi <span class="sr-only">(current)</span></a>
       <a class="nav-link" href="jasa.php">Jasa</a>
+    <?php endif; ?>
+    <!-- END: khusus halaman admin -->
       <a class="nav-link " href="pesanan.php">Pesanan</a>
       <a class="nav-link active" href="#">Cetak Nota</a>
     </div>
@@ -257,7 +266,8 @@ else if (isset($berhasil)) {
   <div class="cetak text-center my-4">
     <strong>Cetak</strong> <br>
     <button type="button" class="btn btn-sm btn-success">
-      <a href="#">
+      <!-- cetak excel -->
+      <a href="cetak-excel.php?no-sp=<?= $divisi['1819123_NoSP']; ?>" target="_blank">
         <svg viewBox="0 0 384 512" width="24" height="24" fill="#fff">
           <path d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48zm212-240h-28.8c-4.4 0-8.4 2.4-10.5 6.3-18 33.1-22.2 42.4-28.6 57.7-13.9-29.1-6.9-17.3-28.6-57.7-2.1-3.9-6.2-6.3-10.6-6.3H124c-9.3 0-15 10-10.4 18l46.3 78-46.3 78c-4.7 8 1.1 18 10.4 18h28.9c4.4 0 8.4-2.4 10.5-6.3 21.7-40 23-45 28.6-57.7 14.9 30.2 5.9 15.9 28.6 57.7 2.1 3.9 6.2 6.3 10.6 6.3H260c9.3 0 15-10 10.4-18L224 320c.7-1.1 30.3-50.5 46.3-78 4.7-8-1.1-18-10.3-18z">
           </path>
@@ -265,7 +275,8 @@ else if (isset($berhasil)) {
       </a>
     </button>
     <button type="button" class="btn btn-sm btn-success">
-      <a href="#">
+      <!-- cetak pdf -->
+      <a href="cetak-pdf.php?no-sp=<?= $divisi['1819123_NoSP']; ?>" target="_blank">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="24" height="24" fill="#fff">
           <path d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48zm250.2-143.7c-12.2-12-47-8.7-64.4-6.5-17.2-10.5-28.7-25-36.8-46.3 3.9-16.1 10.1-40.6 5.4-56-4.2-26.2-37.8-23.6-42.6-5.9-4.4 16.1-.4 38.5 7 67.1-10 23.9-24.9 56-35.4 74.4-20 10.3-47 26.2-51 46.2-3.3 15.8 26 55.2 76.1-31.2 22.4-7.4 46.8-16.5 68.4-20.1 18.9 10.2 41 17 55.8 17 25.5 0 28-28.2 17.5-38.7zm-198.1 77.8c5.1-13.7 24.5-29.5 30.4-35-19 30.3-30.4 35.7-30.4 35zm81.6-190.6c7.4 0 6.7 32.1 1.8 40.8-4.4-13.9-4.3-40.8-1.8-40.8zm-24.4 136.6c9.7-16.9 18-37 24.7-54.7 8.3 15.1 18.9 27.2 30.1 35.5-20.8 4.3-38.9 13.1-54.8 19.2zm131.6-5s-5 6-37.3-7.8c35.1-2.6 40.9 5.4 37.3 7.8z"></path>
         </svg>

@@ -3,9 +3,10 @@ session_start();
 require_once 'functions.php';
 
 // cek session admin
-if (empty($_SESSION['hak-akses']) == 'admin') {
+if (!middleware('admin')) {
   redirect('login');
-} else if (isset($_GET['1819123_KdJasa'])) {
+} 
+if (isset($_GET['1819123_KdJasa'])) {
   // ambil kd jasa
   $kdJasa = filter($_GET['1819123_KdJasa']);
   // hapus data berdasarkan kd jasa

@@ -49,29 +49,29 @@ if (isset($_POST['add-user'])) {
 	// cek hak akses hanya admin atau staff
 	else if (!$hakAkses == 'admin' || !$hakAkses == 'staff') {
 		$status = 'maaf hak akses hanya ada admin atau staff';
-	} else {
+	} 
+	else {
 		$getData = getDataByUsername($username);
 		// cek kalau ada data
 		if ($getData) {
 			// cek password
 			$passwordDiDatabase = $getData[0]['password'];
+			$hakAksesDiDatabase = $getData[0]['hak_akses'];
 			if (password_verify($password, $passwordDiDatabase)) {
 				$_SESSION['pesan-login'] = 'Login Berhasil!';
 				// cek hak akses nya
-				$hakAksesDiDatabase = $getData[0]['hak_akses'];
-
 				if ($hakAksesDiDatabase == 'admin') {
 					//buat session hak akses admin
 					$_SESSION['hak-akses'] = 'admin';
 					$_SESSION['message'] = "$username Anda Berhasil Login Sebagai Admin";
 					$_SESSION['username'] = $username;
-					redirect('form-admin');
-				} else {
+					redirect('divisi');
+				} else if ($hakAksesDiDatabase == 'staff') {
 					//buat session hak akses staff
 					$_SESSION['hak-akses'] = 'staff';
 					$_SESSION['message'] = "$username Anda Berhasil Login Sebagai Staff";
 					$_SESSION['username'] = $username;
-					redirect('form-admin');
+					redirect('pesanan');
 				}
 			}
 		} else {

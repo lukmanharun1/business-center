@@ -3,9 +3,10 @@ session_start();
 require_once 'functions.php';
 
 // cek session admin
-if (empty($_SESSION['hak-akses']) == 'admin') {
+if (!middleware('admin')) {
   redirect('login');
-} else if (isset($_GET['1819123_IdDivisi'])) {
+}
+if (isset($_GET['1819123_IdDivisi'])) {
   // ambil idDivisi
   $idDivisi = filter($_GET['1819123_IdDivisi']);
   // hapus data berdasarkan idDivisi
@@ -13,11 +14,11 @@ if (empty($_SESSION['hak-akses']) == 'admin') {
   // cek apakah berhasil dihapus
   if ($hapusDivisi) {
     $_SESSION['berhasil'] = 'Data Divisi Berhasil Dihapus';
-    redirect('form-admin');
+    redirect('divisi');
   } else {
     $_SESSION['status'] = 'Data Divisi Gagal Dihapus';
-    redirect('form-admin');
+    redirect('divisi');
   }
 } else {
-  redirect('form-admin');
+  redirect('divisi');
 }

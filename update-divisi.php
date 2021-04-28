@@ -3,15 +3,16 @@ session_start();
 require_once 'functions.php';
 
 // cek session admin
-if (empty($_SESSION['hak-akses']) == 'admin') {
+if (!middleware('admin')) {
   redirect('login');
-} else if (isset($_GET['1819123_IdDivisi'])) {
+}
+if (isset($_GET['1819123_IdDivisi'])) {
   // ambil idDivisi
   $idDivisi = filter($_GET['1819123_IdDivisi']);
   // edit data berdasarkan idDivisi
   $getDataDivisi = getDataDivisiById($idDivisi)[0];
 } else {
-  redirect('form-admin');
+  redirect('divisi');
 }
 ?>
 

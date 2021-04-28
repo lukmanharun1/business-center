@@ -3,9 +3,11 @@
 session_start();
 require_once 'functions.php';
 // cek session login untuk admin
-if (empty($_SESSION['hak-akses']) == 'admin') {
+if (!middleware('admin')) {
   redirect('login');
-} else if (isset($_SESSION['username'])) {
+}  
+
+if (isset($_SESSION['username'])) {
   $username = $_SESSION['username'];
 }
 // ketika tombol tambah diklik
@@ -172,7 +174,7 @@ else if (isset($berhasil)) {
 
 <!-- START: navbar -->
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #28a745;">
-  <a class="navbar-brand" href="form-admin.php">
+  <a class="navbar-brand" href="divisi.php">
     <img src="logo.png" alt="logo metik" width="60" height="50" />
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -180,8 +182,10 @@ else if (isset($berhasil)) {
   </button>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav">
-      <a class="nav-link" href="form-admin.php">Divisi <span class="sr-only">(current)</span></a>
-      <a class="nav-link active" href="jasa.php">Jasa</a>
+    <?php if (middleware('admin')) : ?>
+      <a class="nav-link" href="divisi.php">Divisi <span class="sr-only">(current)</span></a>
+      <a class="nav-link active" href="#">Jasa</a>
+    <?php endif; ?>
       <a class="nav-link" href="pesanan.php">Pesanan</a>
       <a class="nav-link" href="cetak-nota.php">Cetak Nota</a>
     </div>

@@ -5,9 +5,31 @@ function koneksi()
     return mysqli_connect('localhost', 'root', '', '1819123_lukman');
 }
 
+function middleware($hakAkses = 'admin') 
+{
+    // hak akses untuk admin
+    if ($hakAkses == 'admin') {
+        if (empty($_SESSION['hak-akses'])) {
+           return false;
+        } else if ($_SESSION['hak-akses'] == 'staff') {
+           return false;
+        } else if ($_SESSION['hak-akses'] == 'admin') {
+            return true;
+        }
+    } else if ($hakAkses == 'staff') {
+        // hak akses untuk staff
+        if (empty($_SESSION['hak-akses'])) {
+           return false;
+        } else if ($_SESSION['hak-akses'] == 'admin' || $_SESSION['hak-akses'] == 'staff') {
+            return true;
+        }
+    } 
+    return false;
+}
 function startHTML($title = '', $includeCSS = '')
 {
-    return '<!doctype html>
+    return '
+    <!doctype html>
     <html lang="en">
       <head>
         <meta charset="utf-8">
@@ -35,11 +57,19 @@ function startHTML($title = '', $includeCSS = '')
                 border-color: #28a745 !important;
                 box-shadow: 0 0 0 1px #28a745 !important;
             }
+            .layer {
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0, .6);
+            }
         </style>
       </head>
       <body>
+      <div class="layer"></div>
+      
     ';
 }
+
 
 function endHTML($includeJs = '')
 {
@@ -222,7 +252,14 @@ function tambahSuratPesan($idDivisi, $tanggalPesanan)
 
 function getAllNota()
 {
-    $query = "SELECT `1819123_sp`.`1819123_TglSP`, `1819123_divisi`.`1819123_NmDivisi`, `1819123_divisi`.`1819123_Alamat`, `1819123_divisi`.`1819123_NoTelp`, `1819123_jasa`.`1819123_NmJasa`, `1819123_jasa`.`1819123_LamaJasa`, `1819123_jasa`.`1819123_HrgJasa`, `1819123_detail_pesan`.`1819123_JmlPesan`, `1819123_detail_pesan`.`1819123_HrgPesan`, `1819123_detail_pesan`.`1819123_JmlPesan` * `1819123_detail_pesan`.`1819123_HrgPesan` AS 'Jumlah_Harga' FROM `1819123_divisi` INNER JOIN `1819123_sp` ON `1819123_divisi`.`1819123_IdDivisi` = `1819123_sp`.`1819123_IdDivisi` JOIN  `1819123_detail_pesan` ON `1819123_detail_pesan`.`1819123_NoSP` = `1819123_sp`.`1819123_NoSP` JOIN `1819123_jasa` ON `1819123_detail_pesan`.`1819123_KdJasa` = `1819123_jasa`.`1819123_KdJasa`";
+    $query = "SELECT `1819123_sp`.`1819123_NoSP`, `1819123_sp`.`1819123_TglSP`, `1819123_divisi`.`1819123_NmDivisi`, `1819123_divisi`.`1819123_Alamat`, `1819123_divisi`.`1819123_NoTelp`, `1819123_jasa`.`1819123_NmJasa`, `1819123_jasa`.`1819123_LamaJasa`, `1819123_jasa`.`1819123_HrgJasa`, `1819123_detail_pesan`.`1819123_JmlPesan`, `1819123_detail_pesan`.`1819123_HrgPesan`, `1819123_detail_pesan`.`1819123_JmlPesan` * `1819123_detail_pesan`.`1819123_HrgPesan` AS 'Jumlah_Harga' FROM `1819123_divisi` INNER JOIN `1819123_sp` ON `1819123_divisi`.`1819123_IdDivisi` = `1819123_sp`.`1819123_IdDivisi` JOIN  `1819123_detail_pesan` ON `1819123_detail_pesan`.`1819123_NoSP` = `1819123_sp`.`1819123_NoSP` JOIN `1819123_jasa` ON `1819123_detail_pesan`.`1819123_KdJasa` = `1819123_jasa`.`1819123_KdJasa`";
+
+    return fetchAssoc(query($query));
+}
+
+function getNotaByNoSP($noSp)
+{
+    $query = "SELECT `1819123_sp`.`1819123_NoSP`, `1819123_sp`.`1819123_TglSP`, `1819123_divisi`.`1819123_NmDivisi`, `1819123_divisi`.`1819123_Alamat`, `1819123_divisi`.`1819123_NoTelp`, `1819123_jasa`.`1819123_NmJasa`, `1819123_jasa`.`1819123_LamaJasa`, `1819123_jasa`.`1819123_HrgJasa`, `1819123_detail_pesan`.`1819123_JmlPesan`, `1819123_detail_pesan`.`1819123_HrgPesan`, `1819123_detail_pesan`.`1819123_JmlPesan` * `1819123_detail_pesan`.`1819123_HrgPesan` AS 'Jumlah_Harga' FROM `1819123_divisi` INNER JOIN `1819123_sp` ON `1819123_divisi`.`1819123_IdDivisi` = `1819123_sp`.`1819123_IdDivisi` JOIN  `1819123_detail_pesan` ON `1819123_detail_pesan`.`1819123_NoSP` = `1819123_sp`.`1819123_NoSP` JOIN `1819123_jasa` ON `1819123_detail_pesan`.`1819123_KdJasa` = `1819123_jasa`.`1819123_KdJasa` WHERE `1819123_sp`.`1819123_NoSP` = '$noSp'";
 
     return fetchAssoc(query($query));
 }

@@ -2,15 +2,16 @@
 session_start();
 require_once 'functions.php';
 
-// cek session admin || staff
-if (empty($_SESSION['hak-akses']) == 'admin' || empty($_SESSION['hak-akses']) == 'admin') {
+// cek session admin atau staff
+if (!middleware('staff')) {
   redirect('login');
-} else if (isset($_GET['cari'])) {
+}
+if (isset($_GET['cari'])) {
   // ambil cari data
   $cari = filter($_GET['cari']);
   $cariDivisi = cariDivisi($cari);
 } else {
-  redirect('form-admin');
+  redirect('divisi');
 }
 
 ?>

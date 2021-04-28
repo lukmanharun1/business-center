@@ -1,11 +1,11 @@
 <?php
-// cek session admin atau staff
 session_start();
 require_once 'functions.php';
-// cek session login untuk admin
-if (empty($_SESSION['hak-akses']) == 'admin' || empty($_SESSION['hak-akses']) == 'staff') {
+// cek session admin atau staff
+if (!middleware('staff')) {
   redirect('login');
-} else if (isset($_GET['kd-jasa'])) {
+} 
+if (isset($_GET['kd-jasa'])) {
   $kdJasa = filter($_GET['kd-jasa']);
   $hapusPesanan = hapusPesanan($kdJasa);
   // cek apakah berhasil dihapus
