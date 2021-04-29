@@ -1,13 +1,19 @@
 <?php
 session_start();
 require_once 'functions.php';
-// ketika tombol login dipencet
-if (isset($_POST['login'])) {
+// cek session login untuk admin
+if (!middleware('admin')) {
+  redirect('login');
+}
+if (isset($_SESSION['username'])) {
+  $username = $_SESSION['username'];
+}
+
+if (isset($_POST['add-user'])) {
 	$username = filter($_POST['username']);
 	$password = filter($_POST['password']);
 	$hakAkses = filter($_POST['hak-akses']);
 	// username harus 6 karakter atau lebih
-
 	if (strlen($username) < 6) {
 		$status = 'username terlalu pendek!';
 	}
@@ -18,42 +24,33 @@ if (isset($_POST['login'])) {
 	// cek hak akses hanya admin atau staff
 	else if (!$hakAkses == 'admin' || !$hakAkses == 'staff') {
 		$status = 'maaf hak akses hanya ada admin atau staff';
-	} 
-	else {
-		$getData = getDataByUsername($username);
-		// cek kalau ada data
-		if ($getData) {
-			// cek password
-			$passwordDiDatabase = $getData[0]['password'];
-			$hakAksesDiDatabase = $getData[0]['hak_akses'];
-			if (password_verify($password, $passwordDiDatabase)) {
-				$_SESSION['pesan-login'] = 'Login Berhasil!';
-				// cek hak akses nya
-				if ($hakAksesDiDatabase == 'admin' && $hakAkses == 'admin') {
-					//buat session hak akses admin
-					$_SESSION['hak-akses'] = 'admin';
-					$_SESSION['message'] = "$username Anda Berhasil Login Sebagai Admin";
-					$_SESSION['username'] = $username;
-					redirect('divisi');
-				} else if ($hakAksesDiDatabase == 'staff' && $hakAkses == 'staff') {
-					//buat session hak akses staff
-					$_SESSION['hak-akses'] = 'staff';
-					$_SESSION['message'] = "$username Anda Berhasil Login Sebagai Staff";
-					$_SESSION['username'] = $username;
-					redirect('pesanan');
-				}
-			}
+	} else {
+		// cek username (username harus unik)
+		$cekUsername = getUsername($username);
+		if ($cekUsername) {
+			// jika ada username maka tampilkan pesan error
+			$status = 'Maaf username sudah ada yang punya';
 		} else {
-			$status = 'Username atau password salah!';
+			// tambahkan username beserta password dan hak ases nya
+			$addUser = addUser($username, $password, $hakAkses);
+			// cek apakah data berhasil ditambahkan?
+			if ($addUser) {
+				$berhasil = 'Data user berhasil ditambahkan!';
+			} else {
+				$status = 'Data user gagal ditambahkan!';
+			}
 		}
 	}
 }
 
-
 ?>
 
-<?= startHTML('Form Login admib / staff', '<script src="sweetalert.min.js"></script>'); ?>
+<?= startHTML('Form Add User Admin & Staff', '<script src="sweetalert.min.js"></script>'); ?>
 <style>
+.active {
+    color: white !important;
+  }
+
 	.form-icon {
 		left: 5px;
 		top: 39px;
@@ -67,6 +64,11 @@ if (isset($_POST['login'])) {
 	body {
 		overflow-x: hidden;
 	}
+
+	.tombol-logout:hover {
+    color: #28a745 !important;
+    background-color: #ededed;
+  }
 </style>
 <?php
 // cek apakah variabel status ada?
@@ -112,8 +114,36 @@ else if (isset($_COOKIE['logout'])) {
 
 ?>
 
+<!-- START: navbar -->
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #28a745;">
+  <a class="navbar-brand" href="divisi.php">
+    <img src="logo.png" alt="logo metik" width="60" height="50" />
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+    <?php if (middleware('admin')) : ?>
+      <a class="nav-link" href="divisi.php">Divisi <span class="sr-only">(current)</span></a>
+      <a class="nav-link" href="jasa.php">Jasa</a>
+      <a class="nav-link active" href="#">Add User</a>
+    <?php endif; ?>
+      <a class="nav-link" href="pesanan.php">Pesanan</a>
+      <a class="nav-link" href="cetak-nota.php">Cetak Nota</a>
+    </div>
+  </div>
+  <span class="navbar-text text-white mr-5">
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff">
+      <path d="M0 0h24v24H0V0z" fill="none" />
+      <path d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+    </svg> <?= $username; ?>
+    <a href="logout.php" class="text-white ml-2 btn btn-outline-light tombol-logout">Logout</a>
+  </span>
+</nav>
+<!-- END: navbar -->
 
-<h1 class="text-center mt-3">Form Login Admin / Staff</h1>
+<h1 class="text-center mt-3">Form Add User Admin & Staff</h1>
 <!-- logo -->
 <div class="container mx-auto text-center">
 	<img src="logo.png" alt="logo metik" width="150" height="150" class="mt-5" />
@@ -156,17 +186,13 @@ else if (isset($_COOKIE['logout'])) {
 					<option value="staff">Staff</option>
 				</select>
 			</div>
-			<div class="row">
-				<!-- button login -->
-				<button type="submit" class="btn btn-success ml-2" name="login">
-					<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff">
-						<g>
-							<rect fill="none" height="24" width="24" />
-						</g>
-						<g>
-							<path d="M11,7L9.6,8.4l2.6,2.6H2v2h10.2l-2.6,2.6L11,17l5-5L11,7z M20,19h-8v2h8c1.1,0,2-0.9,2-2V5c0-1.1-0.9-2-2-2h-8v2h8V19z" />
-						</g>
-					</svg> Login Sekarang
+			<div class="row ml-1">
+				<!-- button add user -->
+				<button type="submit" class="btn btn-success" name="add-user">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff">
+						<path d="M0 0h24v24H0V0z" fill="none" />
+						<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+					</svg>Add User
 				</button>
 			</div>
 

@@ -106,6 +106,10 @@ function getUsername($username)
     $query = "SELECT `username` FROM `1819123_akses` WHERE username = '$username'";
     return fetchAssoc(query($query));
 }
+function getHakAkses($username) {
+    $query = "SELECT `hak_akses` FROM `1819123_akses` WHERE username = '$username'";
+    return fetchAssoc(query($query));
+}
 
 function getDataByUsername($username)
 {
@@ -116,7 +120,7 @@ function getDataByUsername($username)
 function addUser($username, $password, $hakAkses)
 {
     $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-    $query = "INSERT INTO `1819123_akses`(`id`, `username`, `password`, `hak_akses`) VALUES ('', '$username', '$passwordHash', '$hakAkses')";
+    $query = "INSERT INTO `1819123_akses`(`username`, `password`, `hak_akses`) VALUES ('$username', '$passwordHash', '$hakAkses')";
     return query($query);
 }
 

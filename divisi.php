@@ -204,6 +204,7 @@ else if (isset($berhasil)) {
     <?php if (middleware('admin')) : ?>
       <a class="nav-link active" href="#">Divisi <span class="sr-only">(current)</span></a>
       <a class="nav-link" href="jasa.php">Jasa</a>
+      <a class="nav-link" href="add-user.php">Add User</a>
     <?php endif; ?>
       <a class="nav-link" href="pesanan.php">Pesanan</a>
       <a class="nav-link" href="cetak-nota.php">Cetak Nota</a>
