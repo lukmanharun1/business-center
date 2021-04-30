@@ -26,10 +26,7 @@ $namaBulan = [
 
 $bulan = $namaBulan[date('m')];
 $viewTanggalPesanan = date("Y-") . $bulan . date("-d");
-// cek session login untuk admin & staff
-if (empty($_SESSION['hak-akses']) == 'admin' || empty($_SESSION['hak-akses']) == 'staff') {
-  redirect('login');
-} else if (isset($_SESSION['username'])) {
+ if (isset($_SESSION['username'])) {
   $username = $_SESSION['username'];
 }
 // cek tombol + data jasa
@@ -169,6 +166,18 @@ else if (isset($berhasil)) {
   unset($_SESSION['berhasil']);
 
 
+} else if (isset($_SESSION['message'])) {
+  // cek message contoh -> selamat anda berhasil login sebagai staff
+  echo '
+          <script>
+            swal({
+              title: "Selamat ..",
+              text: " ' . $_SESSION['message'] . ' ",
+              icon: "success",
+            });
+        </script>';
+  // hapus session message
+  unset($_SESSION['message']);
 }
 ?>
 <style>
@@ -191,6 +200,9 @@ else if (isset($berhasil)) {
   }
 
   .active {
+    color: white !important;
+  }
+  .nav-link:hover {
     color: white !important;
   }
 
@@ -216,7 +228,7 @@ else if (isset($berhasil)) {
 
 <!-- START: navbar -->
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #28a745;">
-  <a class="navbar-brand" href="divisi.php">
+  <a class="navbar-brand" href="#">
     <img src="logo.png" alt="logo metik" width="60" height="50" />
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -233,6 +245,7 @@ else if (isset($berhasil)) {
     <!-- END: khusus halaman admin -->
       <a class="nav-link active" href="#">Pesanan</a>
       <a class="nav-link" href="cetak-nota.php">Cetak Nota</a>
+      <a href="anime.php" class="nav-link">Anime</a>
     </div>
   </div>
   <span class="navbar-text text-white mr-5">

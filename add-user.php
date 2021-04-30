@@ -10,11 +10,11 @@ if (isset($_SESSION['username'])) {
 }
 
 if (isset($_POST['add-user'])) {
-	$username = filter($_POST['username']);
+	$usernameLogin = filter($_POST['username']);
 	$password = filter($_POST['password']);
 	$hakAkses = filter($_POST['hak-akses']);
 	// username harus 6 karakter atau lebih
-	if (strlen($username) < 6) {
+	if (strlen($usernameLogin) < 6) {
 		$status = 'username terlalu pendek!';
 	}
 	// password harus 6 karakter atau lebih
@@ -26,13 +26,13 @@ if (isset($_POST['add-user'])) {
 		$status = 'maaf hak akses hanya ada admin atau staff';
 	} else {
 		// cek username (username harus unik)
-		$cekUsername = getUsername($username);
+		$cekUsername = getUsername($usernameLogin);
 		if ($cekUsername) {
 			// jika ada username maka tampilkan pesan error
 			$status = 'Maaf username sudah ada yang punya';
 		} else {
 			// tambahkan username beserta password dan hak ases nya
-			$addUser = addUser($username, $password, $hakAkses);
+			$addUser = addUser($usernameLogin, $password, $hakAkses);
 			// cek apakah data berhasil ditambahkan?
 			if ($addUser) {
 				$berhasil = 'Data user berhasil ditambahkan!';
@@ -51,6 +51,9 @@ if (isset($_POST['add-user'])) {
     color: white !important;
   }
 
+	.nav-link:hover {
+    color: white !important;
+  }
 	.form-icon {
 		left: 5px;
 		top: 39px;
@@ -97,26 +100,12 @@ else if (isset($berhasil)) {
 	// hapus variabel
 	unset($berhasil);
 }
-// logout
-// cek apakah variabel berhasil ada?
-// kalau ada tampilkan
-else if (isset($_COOKIE['logout'])) {
-	echo '<script>
-						swal({
-						title: "Selamat ..",
-						text: " ' . $_COOKIE['logout'] . ' ",
-						icon: "success",
-					});
-				</script>';
-	// hapus variabel
-	setcookie('logout', '');
-}
 
 ?>
 
 <!-- START: navbar -->
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #28a745;">
-  <a class="navbar-brand" href="divisi.php">
+  <a class="navbar-brand" href="#">
     <img src="logo.png" alt="logo metik" width="60" height="50" />
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -131,6 +120,7 @@ else if (isset($_COOKIE['logout'])) {
     <?php endif; ?>
       <a class="nav-link" href="pesanan.php">Pesanan</a>
       <a class="nav-link" href="cetak-nota.php">Cetak Nota</a>
+			<a href="anime.php" class="nav-link">Anime</a>
     </div>
   </div>
   <span class="navbar-text text-white mr-5">

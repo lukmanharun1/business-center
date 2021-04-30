@@ -137,7 +137,7 @@ else if (isset($berhasil)) {
 
 <!-- START: navbar -->
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #28a745;">
-  <a class="navbar-brand" href="divisi.php">
+  <a class="navbar-brand" href="#">
     <img src="logo.png" alt="logo metik" width="60" height="50" />
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">

@@ -115,6 +115,9 @@ else if (isset($berhasil)) {
   .active {
     color: white !important;
   }
+  .nav-link:hover {
+    color: white !important;
+  }
 
   thead {
     color: white;
@@ -138,7 +141,7 @@ else if (isset($berhasil)) {
 
 <!-- START: navbar -->
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #28a745;">
-  <a class="navbar-brand" href="divisi.php">
+  <a class="navbar-brand" href="#">
     <img src="logo.png" alt="logo metik" width="60" height="50" />
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -155,6 +158,7 @@ else if (isset($berhasil)) {
     <!-- END: khusus halaman admin -->
       <a class="nav-link " href="pesanan.php">Pesanan</a>
       <a class="nav-link active" href="#">Cetak Nota</a>
+      <a href="anime.php" class="nav-link">Anime</a>
     </div>
   </div>
   <span class="navbar-text text-white mr-5">

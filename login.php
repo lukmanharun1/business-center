@@ -41,6 +41,8 @@ if (isset($_POST['login'])) {
 					$_SESSION['message'] = "$username Anda Berhasil Login Sebagai Staff";
 					$_SESSION['username'] = $username;
 					redirect('pesanan');
+				} else {
+					$status = 'Username atau password salah!';
 				}
 			}
 		} else {
@@ -158,7 +160,7 @@ else if (isset($_COOKIE['logout'])) {
 			</div>
 			<div class="row">
 				<!-- button login -->
-				<button type="submit" class="btn btn-success ml-2" name="login">
+				<button type="submit" class="btn btn-success ml-3" name="login">
 					<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff">
 						<g>
 							<rect fill="none" height="24" width="24" />
