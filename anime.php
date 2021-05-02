@@ -70,6 +70,7 @@ if (isset($_SESSION['username'])) {
     <!-- END: khusus halaman admin -->
       <a class="nav-link" href="pesanan.php">Pesanan</a>
       <a class="nav-link" href="cetak-nota.php">Cetak Nota</a>
+      <a href="menu.php" class="nav-link">Menu</a>
       <a href="#" class="nav-link active">Anime</a>
     </div>
   </div>

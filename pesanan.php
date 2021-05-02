@@ -245,6 +245,7 @@ else if (isset($berhasil)) {
     <!-- END: khusus halaman admin -->
       <a class="nav-link active" href="#">Pesanan</a>
       <a class="nav-link" href="cetak-nota.php">Cetak Nota</a>
+      <a href="menu.php" class="nav-link">Menu</a>
       <a href="anime.php" class="nav-link">Anime</a>
     </div>
   </div>

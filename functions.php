@@ -49,7 +49,7 @@ function startHTML($title = '', $includeCSS = '')
             }
             body {
                 font-family: "Montserrat", sans-serif;
-                background-image: url(tabitabi.jpg);
+                // background-image: url(tabitabi.jpg);
                 background-repeat: no-repeat;
                 background-size: auto;
             }
@@ -57,16 +57,9 @@ function startHTML($title = '', $includeCSS = '')
                 border-color: #28a745 !important;
                 box-shadow: 0 0 0 1px #28a745 !important;
             }
-            .layer {
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0, .6);
-            }
         </style>
       </head>
       <body>
-      <div class="layer"></div>
-      
     ';
 }
 
@@ -272,5 +265,23 @@ function cariNota($cari)
 {
     $query = "SELECT `1819123_sp`.`1819123_TglSP`, `1819123_divisi`.`1819123_NmDivisi`, `1819123_divisi`.`1819123_Alamat`, `1819123_divisi`.`1819123_NoTelp`, `1819123_jasa`.`1819123_NmJasa`, `1819123_jasa`.`1819123_LamaJasa`, `1819123_jasa`.`1819123_HrgJasa`, `1819123_detail_pesan`.`1819123_JmlPesan`, `1819123_detail_pesan`.`1819123_HrgPesan`, `1819123_detail_pesan`.`1819123_JmlPesan` * `1819123_detail_pesan`.`1819123_HrgPesan` AS 'Jumlah_Harga' FROM `1819123_divisi` INNER JOIN `1819123_sp` ON `1819123_divisi`.`1819123_IdDivisi` = `1819123_sp`.`1819123_IdDivisi` JOIN  `1819123_detail_pesan` ON `1819123_detail_pesan`.`1819123_NoSP` = `1819123_sp`.`1819123_NoSP` JOIN `1819123_jasa` ON `1819123_detail_pesan`.`1819123_KdJasa` = `1819123_jasa`.`1819123_KdJasa` WHERE `1819123_sp`.`1819123_TglSP` LIKE '%$cari%' OR `1819123_divisi`.`1819123_NmDivisi` LIKE '%$cari%'  OR `1819123_jasa`.`1819123_NmJasa` LIKE '%$cari%' OR `1819123_divisi`.`1819123_NoTelp` LIKE '%$cari%'";
 
+    return fetchAssoc(query($query));
+}
+
+// tambah data mie ayam & bakso
+function tambahDataMieAyamBakso($jumlahMieAyam, $jumlahBakso, $totalBayar, $uangPembayaran)
+{
+    $query = "INSERT INTO `1819123_mieayam_bakso`(`1819123_id`, `1819123_jumlah_mieayam`, `1819123_jumlah_bakso`, `181923_total_harga`, `1819123_uang_pembayaran`) VALUES (NULL, '$jumlahMieAyam', '$jumlahBakso', '$totalBayar', '$uangPembayaran')";
+    return query($query);
+}
+function getDataMieAyamBakso($jumlahMieAyam, $jumlahBakso, $totalBayar, $uangPembayaran)
+{
+    $query = "SELECT * FROM `1819123_mieayam_bakso` WHERE `1819123_jumlah_mieayam` = '$jumlahMieAyam' AND `1819123_jumlah_bakso` = '$jumlahBakso' AND `181923_total_harga` = '$totalBayar' AND `1819123_uang_pembayaran` = '$uangPembayaran'";
+    return fetchAssoc(query($query));
+}
+
+function getDataMieAyamBaksoById($idMieAyamBakso)
+{
+    $query = "SELECT `1819123_jumlah_mieayam`, `1819123_jumlah_bakso`, `181923_total_harga`, `1819123_uang_pembayaran`, `1819123_uang_pembayaran` - `181923_total_harga` AS `uang_kembalian` FROM `1819123_mieayam_bakso` WHERE `1819123_id` = '$idMieAyamBakso'";
     return fetchAssoc(query($query));
 }
