@@ -128,7 +128,7 @@ function getAllDataDivisi()
 function tambahDataDivsi($namaDivisi, $alamatDivisi, $noTelpDivisi)
 {
     // contoh hasil nya D001
-    $query = "INSERT INTO `1819123_divisi`(`1819123_IdDivisi`, `1819123_NmDivisi`, `1819123_Alamat`, `1819123_NoTelp`) VALUES ('', '$namaDivisi', '$alamatDivisi', '$noTelpDivisi')";
+    $query = "INSERT INTO `1819123_divisi`(`1819123_IdDivisi`, `1819123_NmDivisi`, `1819123_Alamat`, `1819123_NoTelp`) VALUES (NULL, '$namaDivisi', '$alamatDivisi', '$noTelpDivisi')";
     return query($query);
 }
 
@@ -169,7 +169,7 @@ function getAllDataJasa()
 
 function tambahDataJasa($namaJasa, $lamaJasa, $hargaJasa)
 {
-    $query = "INSERT INTO `1819123_jasa`(`1819123_KdJasa`, `1819123_NmJasa`, `1819123_LamaJasa`, `1819123_HrgJasa`) VALUES ('',  '$namaJasa', '$lamaJasa', '$hargaJasa')";
+    $query = "INSERT INTO `1819123_jasa`(`1819123_KdJasa`, `1819123_NmJasa`, `1819123_LamaJasa`, `1819123_HrgJasa`) VALUES (NULL,  '$namaJasa', '$lamaJasa', '$hargaJasa')";
     return query($query);
 }
 
