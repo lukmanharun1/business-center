@@ -79,6 +79,8 @@ if (isset($_POST['update'])) {
     }
   }
 }
+
+// ambil seluruh data divisi
 $getAllDataDivisi = getAllDataDivisi();
 
 
