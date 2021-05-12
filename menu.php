@@ -46,12 +46,12 @@ if (isset($_POST['bayar-sekarang'])) {
 // kalau ada tampilkan
 if (isset($status)) {
   echo '<script>
-							swal({
-							title: "Opps ..",
-							text: " ' . $status . ' ",
-							icon: "error",
-						});
-					</script>';
+            swal({
+            title: "Opps ..",
+            text: " ' . $status . ' ",
+            icon: "error",
+          });
+        </script>';
   // hapus variabel
 }
 
@@ -171,7 +171,7 @@ if (isset($status)) {
         <div class="form-group position-relative">
           <span class="form-icon text-success">Rp.</span>
           <label>Harga Bakso spesial</label>
-          <input type="number" class="form-control"  value="14.000" readonly />
+          <input type="number" class="form-control"  value="18.000" readonly />
         </div>
 
          <!-- jumlah mie pembelian menu Bakso spesial -->
@@ -214,7 +214,7 @@ if (isset($status)) {
           <br><br>
           <!-- harga bakso -->
           <h5 class="d-inline">Harga Bakso spesial : </h5>
-          <strong>Rp.14.000</strong>
+          <strong>Rp.18.000</strong>
           <hr class="pembayaran">
           <!-- jumlah mie ayam -->
           <h5 class="d-inline">Jumlah Pembelian Mie Ayam spesial : </h5>
@@ -275,5 +275,5 @@ if (isset($status)) {
   </div>
 </div>
 
-
+<?php require_once 'footer.php'; ?>
 <?= endHTML('<script src="menu.js"></script>'); ?>

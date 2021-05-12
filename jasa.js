@@ -1,7 +1,7 @@
 // tombol tambah
-const modalContent = document.getElementById('modal-content');
-const tombolTambah = document.getElementById('tombol-tambah');
-tombolTambah.addEventListener('click', function () {
+const modalContent = document.getElementById("modal-content");
+const tombolTambah = document.getElementById("tombol-tambah");
+tombolTambah.addEventListener("click", function () {
   modalContent.innerHTML = `
   <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Form Tambah Data Jasa</h5>
@@ -79,9 +79,9 @@ tombolTambah.addEventListener('click', function () {
  `;
 });
 
-const tbody = document.getElementsByTagName('tbody')[0];
-tbody.addEventListener('click', function (e) {
-  if (e.target.classList.contains('tombol-hapus')) {
+const tbody = document.getElementsByTagName("tbody")[0];
+tbody.addEventListener("click", function (e) {
+  if (e.target.classList.contains("tombol-hapus")) {
     // tombol hapus data
 
     // cegah aksi default
@@ -90,39 +90,34 @@ tbody.addEventListener('click', function (e) {
       title: "Konfirmasi",
       text: "Apakah anda yakin?",
       icon: "warning",
-      buttons: ['Tidak Jadi', 'Hapus Sekarang']
+      buttons: ["Tidak Jadi", "Hapus Sekarang"],
     });
-    // ambil tomobl hapus sekarang 
-    const tombolHapusSekarang = document.querySelector('.swal-button--confirm');
-    tombolHapusSekarang.addEventListener('click', () => {
+    // ambil tomobl hapus sekarang
+    const tombolHapusSekarang = document.querySelector(".swal-button--confirm");
+    tombolHapusSekarang.addEventListener("click", () => {
       const idDivisi = e.target.dataset.jasa;
       // pindahkan kehalaman hapus jasa
       document.location.href = `hapus-jasa.php?1819123_KdJasa=${idDivisi}`;
     });
-
-  
-  } else if (e.target.classList.contains('tombol-update')) {
-    // tombol update data   
+  } else if (e.target.classList.contains("tombol-update")) {
+    // tombol update data
     const idJasa = e.target.dataset.jasa;
-      fetch(`update-jasa.php?1819123_KdJasa=${idJasa}`)
-        .then(response => response.text())
-        .then(success => {
-          modalContent.innerHTML = success;
-        });
-    
+    fetch(`update-jasa.php?1819123_KdJasa=${idJasa}`)
+      .then((response) => response.text())
+      .then((success) => {
+        modalContent.innerHTML = success;
+      });
   }
 });
 
-
 // cari data jasa
-const cariJasa = document.getElementById('cari-jasa');
+const cariJasa = document.getElementById("cari-jasa");
 // tambahkan event keyup saat keyboard diketik
-cariJasa.addEventListener('keyup', function () {
-  
+cariJasa.addEventListener("keyup", function () {
   const valueCari = cariJasa.value;
   fetch(`cari-jasa.php?cari=${valueCari}`)
-    .then(response => response.text())
-    .then(success => {
+    .then((response) => response.text())
+    .then((success) => {
       tbody.innerHTML = success;
     });
 });

@@ -60,7 +60,7 @@ hr.header {
           <br><br>
           <!-- harga bakso -->
           <h5 class="d-inline">Harga Bakso spesial : </h5>
-          <strong>Rp.14.000</strong>
+          <strong>Rp.18.000</strong>
           <hr class="pembayaran">
           <!-- jumlah mie ayam -->
           <h5 class="d-inline">Jumlah Pembelian Mie Ayam spesial : </h5>

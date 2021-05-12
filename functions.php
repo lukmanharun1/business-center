@@ -94,6 +94,11 @@ function fetchAssoc($mysqliQuery)
     return mysqli_fetch_all($mysqliQuery, MYSQLI_ASSOC);
 }
 
+function formatRp($number)
+{
+    return number_format($number, 0, ',', '.');
+}
+
 function getUsername($username)
 {
     $query = "SELECT `username` FROM `1819123_akses` WHERE username = '$username'";
@@ -207,16 +212,17 @@ function cariJasaByKdJasa($kdJasa)
     return fetchAssoc(query($query));
 }
 
-function hitungSuratPesan()
+function getAllSuratPesanan()
 {
-    $query = "SELECT `1819123_NoSp` FROM `1819123_sp`";
-    return count(fetchAssoc(query($query)));
+    $query = "SELECT `1819123_divisi`.`1819123_IdDivisi`, `1819123_sp`.`1819123_NoSP`, `1819123_divisi`.`1819123_NmDivisi`, `1819123_divisi`.`1819123_Alamat`, `1819123_divisi`.`1819123_NoTelp`, `1819123_sp`.`1819123_TglSP` FROM `1819123_sp` INNER JOIN `1819123_divisi` ON `1819123_divisi`.`1819123_IdDivisi` = `1819123_sp`.`1819123_IdDivisi` ORDER BY `1819123_divisi`.`1819123_Alamat` DESC";
+
+    return fetchAssoc(query($query));
 }
-function tambahDetailPesan($kdJasa, $jumlahPesan, $hargaPesan)
+
+function tambahDetailPesan($noSp, $kdJasa, $jumlahPesan, $hargaPesan)
 {
-    // NoSp detail harus sama dengan NoSp di tabel nis
-    $noSp = hitungSuratPesan() + 1;
-    $query = "INSERT INTO `1819123_detail_pesan`(`1819123_NoSP`, `1819123_KdJasa`, `1819123_JmlPesan`, `1819123_HrgPesan`) VALUES ('$noSp', '$kdJasa', '$jumlahPesan', '$hargaPesan')";
+    
+    $query = "INSERT INTO `1819123_detail_pesan`(`id`, `1819123_NoSP`, `1819123_KdJasa`, `1819123_JmlPesan`, `1819123_HrgPesan`) VALUES (NULL, '$noSp', '$kdJasa', '$jumlahPesan', '$hargaPesan')";
     return query($query);
 }
 
@@ -238,15 +244,30 @@ function getNoSpDetailPesan()
     $query = "SELECT `1819123_NoSP` FROM `1819123_detail_pesan` ORDER BY `1819123_NoSp` DESC LIMIT 1";
     return fetchAssoc(query($query));
 }
-function tambahSuratPesan($idDivisi, $tanggalPesanan)
+function tambahSuratPesan($noSp, $idDivisi, $tanggalPesanan)
 {
-    // ambil data terakhir no surat pesanan di tabel detail pesan
-    $noSp = getNoSpDetailPesan()[0]['1819123_NoSP'];
-    $query = "INSERT INTO `1819123_sp`(`1819123_NoSP`, `1819123_IdDivisi`, `1819123_TglSP`) VALUES ('$noSp', '$idDivisi', '$tanggalPesanan')";
+    $query = "INSERT INTO `1819123_sp`(`1819123_NoSP`, `1819123_IdDivisi`, `1819123_TglSP`) VALUES ('sp-$noSp', '$idDivisi', '$tanggalPesanan')";
 
     return query($query);
 }
 
+function detailsPesananDivisi($noSp)
+{
+    $query = "SELECT `1819123_divisi`.`1819123_NmDivisi`, `1819123_divisi`.`1819123_Alamat`, `1819123_divisi`.`1819123_NoTelp`, `1819123_sp`.`1819123_TglSP` FROM `1819123_sp` INNER JOIN `1819123_divisi` ON `1819123_divisi`.`1819123_IdDivisi` = `1819123_sp`.`1819123_IdDivisi` WHERE `1819123_sp`.`1819123_NoSP` = '$noSp'";
+    return fetchAssoc(query($query));
+}
+
+function detailsPesananJasa($noSp)
+{
+    $query = "SELECT `1819123_detail_pesan`.`id`, `1819123_jasa`.`1819123_NmJasa`, `1819123_jasa`.`1819123_LamaJasa`, `1819123_detail_pesan`.`1819123_JmlPesan`, `1819123_detail_pesan`.`1819123_HrgPesan`, `1819123_detail_pesan`.`1819123_JmlPesan` * `1819123_detail_pesan`.`1819123_HrgPesan` AS 'Jumlah_Harga' FROM `1819123_detail_pesan` INNER JOIN `1819123_jasa` ON `1819123_jasa`.`1819123_KdJasa` = `1819123_detail_pesan`.`1819123_KdJasa` INNER JOIN `1819123_sp` ON `1819123_detail_pesan`.`1819123_NoSP` = `1819123_sp`.`1819123_NoSP` WHERE `1819123_detail_pesan`.`1819123_NoSP` = '$noSp'";
+    return fetchAssoc(query($query));
+}
+
+function hapusDetailPesanan($id)
+{
+    $query = "DELETE FROM `1819123_detail_pesan` WHERE `id` = '$id'";
+    return query($query);
+}
 function getAllNota()
 {
     $query = "SELECT `1819123_sp`.`1819123_NoSP`, `1819123_sp`.`1819123_TglSP`, `1819123_divisi`.`1819123_NmDivisi`, `1819123_divisi`.`1819123_Alamat`, `1819123_divisi`.`1819123_NoTelp`, `1819123_jasa`.`1819123_NmJasa`, `1819123_jasa`.`1819123_LamaJasa`, `1819123_jasa`.`1819123_HrgJasa`, `1819123_detail_pesan`.`1819123_JmlPesan`, `1819123_detail_pesan`.`1819123_HrgPesan`, `1819123_detail_pesan`.`1819123_JmlPesan` * `1819123_detail_pesan`.`1819123_HrgPesan` AS 'Jumlah_Harga' FROM `1819123_divisi` INNER JOIN `1819123_sp` ON `1819123_divisi`.`1819123_IdDivisi` = `1819123_sp`.`1819123_IdDivisi` JOIN  `1819123_detail_pesan` ON `1819123_detail_pesan`.`1819123_NoSP` = `1819123_sp`.`1819123_NoSP` JOIN `1819123_jasa` ON `1819123_detail_pesan`.`1819123_KdJasa` = `1819123_jasa`.`1819123_KdJasa`";

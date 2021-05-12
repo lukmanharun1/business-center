@@ -7,7 +7,7 @@ const harusBayar = document.getElementById("harus-bayar");
 
 // harga mie ayam & bakso
 const hargaMieAyam = 20000;
-const hargaBakso = 14000;
+const hargaBakso = 18000;
 
 // saat jumlah pembelian bakso spesial
 baksoSpesial.addEventListener("keyup", hitungTotalBayar);

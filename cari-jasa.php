@@ -21,7 +21,7 @@ if (isset($_GET['cari'])) {
     <td><?= ++$i; ?></td>
     <td><?= $cari['1819123_NmJasa']; ?></td>
     <td><?= $cari['1819123_LamaJasa']; ?></td>
-    <td><?= $cari['1819123_HrgJasa']; ?></td>
+    <td>Rp.<?= formatRp($jasa['1819123_HrgJasa']); ?></td>
     <td>
       <!-- tombol update -->
       <button type="button" class="btn btn-success btn-sm tombol-update" data-toggle="modal" data-target="#exampleModal" data-jasa="<?= $cari['1819123_KdJasa']; ?>">

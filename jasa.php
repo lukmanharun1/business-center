@@ -243,7 +243,7 @@ else if (isset($berhasil)) {
           <td><?= ++$i; ?></td>
           <td><?= $jasa['1819123_NmJasa']; ?></td>
           <td><?= $jasa['1819123_LamaJasa']; ?> Hari</td>
-          <td>Rp. <?= $jasa['1819123_HrgJasa']; ?></td>
+          <td>Rp.<?= formatRp($jasa['1819123_HrgJasa']); ?></td>
           <td>
             <!-- tombol update -->
             <button type="button" class="btn btn-success btn-sm tombol-update" data-toggle="modal" data-target="#exampleModal" data-jasa="<?= $jasa['1819123_KdJasa']; ?>">
