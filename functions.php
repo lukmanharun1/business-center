@@ -214,8 +214,24 @@ function cariJasaByKdJasa($kdJasa)
 
 function getAllSuratPesanan()
 {
-    $query = "SELECT `1819123_divisi`.`1819123_IdDivisi`, `1819123_sp`.`1819123_NoSP`, `1819123_divisi`.`1819123_NmDivisi`, `1819123_divisi`.`1819123_Alamat`, `1819123_divisi`.`1819123_NoTelp`, `1819123_sp`.`1819123_TglSP` FROM `1819123_sp` INNER JOIN `1819123_divisi` ON `1819123_divisi`.`1819123_IdDivisi` = `1819123_sp`.`1819123_IdDivisi` ORDER BY `1819123_divisi`.`1819123_Alamat` DESC";
+    // ambil seluruh data di tabel sp & join tabel ke divisi
+    $query = "SELECT `1819123_divisi`.`1819123_IdDivisi`, `1819123_sp`.`1819123_NoSP`, `1819123_divisi`.`1819123_NmDivisi`, `1819123_divisi`.`1819123_Alamat`, `1819123_divisi`.`1819123_NoTelp`, `1819123_sp`.`1819123_TglSP` FROM `1819123_sp` INNER JOIN `1819123_divisi` ON `1819123_divisi`.`1819123_IdDivisi` = `1819123_sp`.`1819123_IdDivisi` ORDER BY `1819123_sp`.`1819123_TglSP` DESC";
 
+    return fetchAssoc(query($query));
+}
+
+function cariDataPesanan($cari)
+{
+    // ambil seluruh data di tabel sp & join tabel ke divisi
+    $query = "SELECT `1819123_divisi`.`1819123_IdDivisi`, `1819123_sp`.`1819123_NoSP`, `1819123_divisi`.`1819123_NmDivisi`, `1819123_divisi`.`1819123_Alamat`, `1819123_divisi`.`1819123_NoTelp`, `1819123_sp`.`1819123_TglSP` FROM `1819123_sp` INNER JOIN `1819123_divisi` ON `1819123_divisi`.`1819123_IdDivisi` = `1819123_sp`.`1819123_IdDivisi` WHERE `1819123_divisi`.`1819123_NmDivisi` LIKE '%$cari%' OR `1819123_divisi`.`1819123_Alamat` LIKE '%$cari%' OR `1819123_divisi`.`1819123_NoTelp` LIKE '%$cari%' OR `1819123_sp`.`1819123_TglSP` LIKE '%$cari%' ORDER BY `1819123_sp`.`1819123_TglSP` DESC";
+
+    return fetchAssoc(query($query));
+}
+
+function cariDivisiPesanan($cari)
+{
+    // ambil seluruh data divisi berdasarkan pencarian
+    $query = "SELECT * FROM `1819123_divisi` WHERE `1819123_NmDivisi` LIKE '%$cari%' OR `1819123_Alamat` LIKE '%$cari%' OR `1819123_NoTelp` LIKE '%$cari%'";
     return fetchAssoc(query($query));
 }
 

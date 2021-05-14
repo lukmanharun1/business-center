@@ -4,6 +4,8 @@ const tablePesanan = document.getElementById("table-pesanan");
 
 const detailsPesan = document.getElementById("details-pesan");
 const tambahDataJasaPesanan = document.getElementById("tambahDataJasaPesanan");
+const cariDataPesanan = document.getElementById("cari-data-pesanan");
+const cariDivisiPesanan = document.getElementById("cari-divisi-pesanan");
 
 tableDivisi.addEventListener("click", async function (e) {
   const idDivisi = e.target.dataset.iddivisi;
@@ -53,4 +55,30 @@ document.addEventListener("click", function (e) {
       document.location.href = `hapus-details-pesanan.php?id=${id}`;
     });
   }
+});
+
+// cari data pesanan
+cariDataPesanan.addEventListener("keyup", async function () {
+  // saat keyboard di ketik lalu cari data pesanan
+
+  await fetch(
+    `cari-data-pesanan.php?cari-data-pesanan=${cariDataPesanan.value}`
+  )
+    .then((response) => response.text())
+    .then((success) => {
+      tablePesanan.innerHTML = success;
+    })
+    .catch((error) => console.log(error));
+});
+
+// cari data divisi pesanan
+cariDivisiPesanan.addEventListener("keyup", async function () {
+  await fetch(
+    `cari-divisi-pesanan.php?cari-divisi-pesanan=${cariDivisiPesanan.value}`
+  )
+    .then((response) => response.text())
+    .then((success) => {
+      tableDivisi.innerHTML = success;
+    })
+    .catch((error) => console.log(error));
 });
