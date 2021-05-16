@@ -4,53 +4,29 @@ session_start();
 require_once 'functions.php';
 header("Content-type: application/vnd-ms-excel");
 header("Content-Disposition: attachment; filename=Cetak Nota.xls");
-// cek session login untuk admin
-if (empty($_SESSION['hak-akses']) == 'admin' || empty($_SESSION['hak-akses']) == 'staff') {
+// cek session admin atau staff
+if (!middleware('staff')) {
   redirect('login');
-} else if (isset($_GET['no-sp'])) {
-  $noSp = filter($_GET['no-sp']);
-  $getNotaByNoSp = getNotaByNoSP($noSp);
+} 
+if (isset($_GET['nosp'])) {
+  // ambil cari data divisi berdasarkan nosp
+  $noSp = filter($_GET['nosp']);
+  $detailsPesananDivisi = detailsPesananDivisi($noSp)[0];
+
+  // ambil data jasa berdasarkan nosp
+  $detailsPesananJasa = detailsPesananJasa($noSp);
 } else {
-  redirect('cetak-nota');
+  redirect('login');
 }
-// ini untuk view
-$namaBulan = [
-  '01' => 'januari',
-  '02' => 'februari',
-  '03' => 'Maret',
-  '04' => 'April',
-  '05' => 'Mei',
-  '06' => 'Juni',
-  '07' => 'Juli',
-  '08' => 'Agustus',
-  '09' => 'September',
-  '10' => 'Oktober',
-  '11' => 'November',
-  '12' => 'Desember'
-];
+$tanggalNota = date('Y-m-d');
 
-$bulan = $namaBulan[date('m')];
-$viewTanggalNota = date("d-") . $bulan . date('-Y');
-
-$dataDivisi = [];
-foreach ($getNotaByNoSp as $i => $divisi) {
-
-  $dataDivisi = [
-    $i => [
-      '1819123_NmDivisi' => $divisi['1819123_NmDivisi'],
-      '1819123_Alamat' => $divisi['1819123_Alamat'],
-      '1819123_NoTelp' => $divisi['1819123_NoTelp']
-    ]
-  ];
-}
-// mengetahui total harga
 $totalHarga = 0;
-foreach ($getNotaByNoSp as $hargaPesan) {
-  $totalHarga += $hargaPesan['Jumlah_Harga'];
+foreach ($detailsPesananJasa as $jasa) {
+  $totalHarga += $jasa['Jumlah_Harga'];
 }
 ?>
 
-<?= startHTML('Cetak PDF'); ?>
+<?= startHTML('Cetak Excel'); ?>
 <style>
   hr {
     border: 4px solid black;
@@ -70,21 +46,21 @@ foreach ($getNotaByNoSp as $hargaPesan) {
       <tr>
         <td>Tanggal Nota</td>
         <td>:</td>
-        <td><?= $viewTanggalNota; ?></td>
+        <td><?= $tanggalNota; ?></td>
         <td></td>
         <td>Nama Divisi</td>
         <td>:</td>
-        <td><strong><?= $dataDivisi[0]['1819123_NmDivisi']; ?></strong></td>
+        <td><strong><?= $detailsPesananDivisi['1819123_NmDivisi']; ?></strong></td>
       </tr>
 
       <tr>
         <td>Jumlah Bayar</td>
         <td>:</td>
-        <td><strong>Rp.<?= $totalHarga; ?></strong></td>
+        <td><strong>Rp.<?= formatRp($totalHarga); ?></strong></td>
         <td></td>
         <td>Alamat</td>
         <td>:</td>
-        <td><strong><?= $dataDivisi[0]['1819123_Alamat']; ?></strong></td>
+        <td><strong><?= $detailsPesananDivisi['1819123_Alamat']; ?></strong></td>
       </tr>
       <tr>
         <td></td>
@@ -94,7 +70,7 @@ foreach ($getNotaByNoSp as $hargaPesan) {
         <td>Telp</td>
         <td>:</td>
         <td>
-          <strong><?= $dataDivisi[0]['1819123_NoTelp']; ?></strong>
+          <strong><?= $detailsPesananDivisi['1819123_NoTelp']; ?></strong>
         </td>
       </tr>
     </table>
@@ -112,25 +88,24 @@ foreach ($getNotaByNoSp as $hargaPesan) {
         
       </thead>
       <tbody>
-      <?php foreach($getNotaByNoSp as $jasa) : ?>
+      <?php foreach($detailsPesananJasa as $jasa) : ?>
         <tr>
           <td><?= $jasa['1819123_NmJasa']; ?></td>
           <td><?= $jasa['1819123_JmlPesan']; ?></td>
-          <td>Rp.<?= $jasa['1819123_HrgPesan']; ?></td>
-          <td>Rp.<?= $jasa['Jumlah_Harga']; ?></td>
+          <td>Rp.<?= formatRp($jasa['1819123_HrgPesan']); ?></td>
+          <td>Rp.<?= formatRp($jasa['Jumlah_Harga']); ?></td>
         </tr>
         <?php endforeach; ?>
         <tr>
           <td colspan="2"></td>
           <td>Total Harga</td>
           <td>
-            <strong>Rp.<?= $totalHarga; ?></strong>
+            <strong>Rp.<?= formatRp($totalHarga); ?></strong>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
-<script>window.print();</script>
 <?php endHTML(); ?>
  

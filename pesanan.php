@@ -11,24 +11,7 @@ if (isset($_SESSION['username'])) {
 }
 // ini untuk dimasukan pesanan di database
 $tanggalPesanan = date('Y-m-d');
-// ini untuk view
-$namaBulan = [
-  '01' => 'januari',
-  '02' => 'februari',
-  '03' => 'Maret',
-  '04' => 'April',
-  '05' => 'Mei',
-  '06' => 'Juni',
-  '07' => 'Juli',
-  '08' => 'Agustus',
-  '09' => 'September',
-  '10' => 'Oktober',
-  '11' => 'November',
-  '12' => 'Desember'
-];
 
-$bulan = $namaBulan[date('m')];
-$viewTanggalPesanan = date("Y-") . $bulan . date("-d");
 
 
 
@@ -157,7 +140,12 @@ else if (isset($berhasil)) {
   .nav-link:hover {
     color: white !important;
   }
-
+  /* menimpa bawaan bootstrap */
+  .table-responsive {
+    max-height: 450px;
+    overflow-y: scroll;
+  }
+  
   thead {
     color: white;
     background-color: #28a745;
@@ -227,50 +215,52 @@ else if (isset($berhasil)) {
     </div>
   </div>
   <!-- data pesanan -->
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">No</th>
-        <th scope="col" >Nama Divisi</th>
-        <th scope="col" style="width: 500px;">Alamat Divisi</th>
-        <th scope="col">Nomor Telp</th>
-        <th scope="col">Tanggal Pesanan</th>
-        <th scope="col">Aksi</th>
-      </tr>
-    </thead>
-    <tbody id="table-pesanan">
-      <?php foreach ($getAllSuratPesanan as $i => $pesanan) : ?>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
         <tr>
-          <td><?= ++$i; ?></td>
-          <td><?= $pesanan['1819123_NmDivisi']; ?></td>
-          <td><?= $pesanan['1819123_Alamat']; ?></td>
-          <td><?= $pesanan['1819123_NoTelp']; ?></td>
-          <td><?= $pesanan['1819123_TglSP']; ?></td>
-          <td>
-            <!-- Button trigger modal -->
-
-            <!-- tombol details pesanan -->
-            <button type="button" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" class="btn btn-success btn-sm details-pesan" data-toggle="modal" data-target="#detailsPesan">
-              <svg xmlns="http://www.w3.org/2000/svg" class="details-pesan" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" height="24" viewBox="0 0 24 24" width="24" fill="#fff">
-                <path d="M0 0h24v24H0z" fill="none"data-nosp="<?= $pesanan['1819123_NoSP']; ?>" class="details-pesan" />
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" class="details-pesan" />
-              </svg> Details Pesanan
-            </button>
-            <br>
-            <!-- tombol tambah lagi data jasa -->
-            <button type="button" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" class="btn btn-success btn-sm mt-2 tambah-lagi" data-toggle="modal" data-target="#tambahDataJasa">
-              <svg xmlns="http://www.w3.org/2000/svg" class="tambah-lagi" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff">
-                <path d="M0 0h24v24H0V0z" fill="none" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" class="tambah-lagi" />
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" class="tambah-lagi" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" />
-              </svg>Lagi Data Jasa
-            </button>
-          </td>
+          <th scope="col">No</th>
+          <th scope="col" >Nama Divisi</th>
+          <th scope="col" style="width: 500px;">Alamat Divisi</th>
+          <th scope="col">Nomor Telp</th>
+          <th scope="col">Tanggal Pesanan</th>
+          <th scope="col">Aksi</th>
         </tr>
-      <?php endforeach; ?>
+      </thead>
+      <tbody id="table-pesanan">
+        <?php foreach ($getAllSuratPesanan as $i => $pesanan) : ?>
+          <tr>
+            <td><?= ++$i; ?></td>
+            <td><?= $pesanan['1819123_NmDivisi']; ?></td>
+            <td><?= $pesanan['1819123_Alamat']; ?></td>
+            <td><?= $pesanan['1819123_NoTelp']; ?></td>
+            <td><?= $pesanan['1819123_TglSP']; ?></td>
+            <td>
+              <!-- Button trigger modal -->
 
-      
-    </tbody>
-  </table>
+              <!-- tombol details pesanan -->
+              <button type="button" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" class="btn btn-success btn-sm details-pesan" data-toggle="modal" data-target="#detailsPesan">
+                <svg xmlns="http://www.w3.org/2000/svg" class="details-pesan" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" height="24" viewBox="0 0 24 24" width="24" fill="#fff">
+                  <path d="M0 0h24v24H0z" fill="none"data-nosp="<?= $pesanan['1819123_NoSP']; ?>" class="details-pesan" />
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" class="details-pesan" />
+                </svg> Details Pesanan
+              </button>
+              <br>
+              <!-- tombol tambah lagi data jasa -->
+              <button type="button" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" class="btn btn-success btn-sm mt-2 tambah-lagi" data-toggle="modal" data-target="#tambahDataJasa">
+                <svg xmlns="http://www.w3.org/2000/svg" class="tambah-lagi" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff">
+                  <path d="M0 0h24v24H0V0z" fill="none" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" class="tambah-lagi" />
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" class="tambah-lagi" data-nosp="<?= $pesanan['1819123_NoSP']; ?>" />
+                </svg>Lagi Data Jasa
+              </button>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+
+        
+      </tbody>
+    </table>
+  </div>
   
   <!-- data divisi pesanan -->
   <h2 class="text-center mb-3">Form Data Divisi Pesanan</h2>
@@ -286,36 +276,38 @@ else if (isset($berhasil)) {
       </div>
     </div>
   </div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">No</th>
-        <th scope="col">Nama Divisi</th>
-        <th scope="col" style="width: 650px;">Alamat Divisi</th>
-        <th scope="col">Nomor Telp</th>
-        <th scope="col">Aksi</th>
-      </tr>
-    </thead>
-    <tbody id="table-divisi">
-      <?php foreach ($getAllDataDivisi as $i => $divisi) : ?>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
         <tr>
-          <td><?= ++$i; ?></td>
-          <td><?= $divisi['1819123_NmDivisi']; ?></td>
-          <td><?= $divisi['1819123_Alamat']; ?></td>
-          <td><?= $divisi['1819123_NoTelp']; ?></td>
-          <td>
-            <!-- Button trigger modal data jasa divisi -->
-            <button type="button" data-iddivisi="<?= $divisi['1819123_IdDivisi']; ?>" class="btn btn-success btn-sm" data-toggle="modal" data-target="#dataJasaPesanan">
-              <svg xmlns="http://www.w3.org/2000/svg" data-iddivisi="<?= $divisi['1819123_IdDivisi']; ?>" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff">
-                <path d="M0 0h24v24H0V0z" fill="none" data-iddivisi="<?= $divisi['1819123_IdDivisi']; ?>" />
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" data-iddivisi="<?= $divisi['1819123_IdDivisi']; ?>" />
-              </svg>Data Jasa
-            </button>
-          </td>
+          <th scope="col">No</th>
+          <th scope="col">Nama Divisi</th>
+          <th scope="col" style="width: 650px;">Alamat Divisi</th>
+          <th scope="col">Nomor Telp</th>
+          <th scope="col">Aksi</th>
         </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
+      </thead>
+      <tbody id="table-divisi">
+        <?php foreach ($getAllDataDivisi as $i => $divisi) : ?>
+          <tr>
+            <td><?= ++$i; ?></td>
+            <td><?= $divisi['1819123_NmDivisi']; ?></td>
+            <td><?= $divisi['1819123_Alamat']; ?></td>
+            <td><?= $divisi['1819123_NoTelp']; ?></td>
+            <td>
+              <!-- Button trigger modal data jasa divisi -->
+              <button type="button" data-iddivisi="<?= $divisi['1819123_IdDivisi']; ?>" class="btn btn-success btn-sm" data-toggle="modal" data-target="#dataJasaPesanan">
+                <svg xmlns="http://www.w3.org/2000/svg" data-iddivisi="<?= $divisi['1819123_IdDivisi']; ?>" height="24px" viewBox="0 0 24 24" width="24px" fill="#fff">
+                  <path d="M0 0h24v24H0V0z" fill="none" data-iddivisi="<?= $divisi['1819123_IdDivisi']; ?>" />
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" data-iddivisi="<?= $divisi['1819123_IdDivisi']; ?>" />
+                </svg>Data Jasa
+              </button>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
 
 </div>
 
