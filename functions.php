@@ -34,7 +34,7 @@ function startHTML($title = '', $includeCSS = '')
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="shortcut icon" href="tabitabi.jpg" type="image/x-icon">
+        <link rel="shortcut icon" href="iraina.jpeg" type="image/x-icon">
         <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
         ' . $includeCSS . '
         <title>' . $title . '</title>
@@ -49,9 +49,9 @@ function startHTML($title = '', $includeCSS = '')
             }
             body {
                 font-family: "Montserrat", sans-serif;
-                // background-image: url(tabitabi.jpg);
+                background-image: url(iraina.jpeg);
                 background-repeat: no-repeat;
-                background-size: auto;
+                background-size: cover;
             }
             .form-control:focus {
                 border-color: #28a745 !important;

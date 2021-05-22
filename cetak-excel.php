@@ -12,7 +12,6 @@ if (isset($_GET['nosp'])) {
   // ambil cari data divisi berdasarkan nosp
   $noSp = filter($_GET['nosp']);
   $detailsPesananDivisi = detailsPesananDivisi($noSp)[0];
-
   // ambil data jasa berdasarkan nosp
   $detailsPesananJasa = detailsPesananJasa($noSp);
 } else {
