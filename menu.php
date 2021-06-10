@@ -14,9 +14,10 @@ if (isset($_SESSION['username'])) {
 if (isset($_POST['bayar-sekarang'])) {
   $jumlahMieAyam = (int) filter($_POST['mie-ayam-spesial']);
   $jumlahBakso = (int) filter($_POST['bakso-spesial']);
-  $totalBayar = (int) filter($_POST['harus-bayar']);
+  $hargaMieAyam = (int) filter($_POST['harga-mieayam']);
+  $hargaBakso = (int) filter($_POST['harga-bakso']);
   $uangPembayaran = (int) filter($_POST['uang-pembayaran']);
-
+  $totalBayar = (int) filter($_POST['harus-bayar']);
   // validasi uang pembayaran harus lebih besar dari total bayar
   if ($totalBayar > $uangPembayaran) {
     echo "<script>
@@ -26,10 +27,18 @@ if (isset($_POST['bayar-sekarang'])) {
     $uangKembalian = $uangPembayaran - $totalBayar;
 
     // insert data mie ayam & bakso
-    $tambahDataMieAyamBakso = tambahDataMieAyamBakso($jumlahMieAyam, $jumlahBakso, $totalBayar, $uangPembayaran);
+    $data = [
+      'jumlah_mieayam' => $jumlahMieAyam,
+      'jumlah_bakso' => $jumlahBakso,
+      'harga_mieayam' => $hargaMieAyam,
+      'harga_bakso' => $hargaBakso,
+      'uang_pembayaran' => $uangPembayaran
+    ];
+
+    $tambahDataMieAyamBakso = tambahDataMieAyamBakso($data);
     // cek apakah berhasil insert data mie ayam & bakso
     if ($tambahDataMieAyamBakso) {
-      $getDataMieAyamBakso = getDataMieAyamBakso($jumlahMieAyam, $jumlahBakso, $totalBayar, $uangPembayaran)[0];
+      $getDataMieAyamBakso = getDataMieAyamBakso($data);
     } else {
       $status = 'Input Data yang benar';
     }
@@ -147,12 +156,12 @@ if (isset($status)) {
       
       <div class="col-md-4 ml-5">
         <form action="" method="post">
-            <!-- harga Mie ayam spesial -->
-        <div class="form-group position-relative">
-          <span class="form-icon text-success">Rp.</span>
-          <label>Harga Mie Ayam spesial</label>
-          <input type="number" class="form-control" value="20.000" disabled />
-        </div>
+          <!-- harga Mie ayam spesial -->
+          <div class="form-group position-relative">
+            <span class="form-icon text-success">Rp.</span>
+            <label for="harga-mieayam">Harga Mie Ayam spesial</label>
+            <input type="number" class="form-control" id="harga-mieayam" name="harga-mieayam" />
+          </div>
 
          <!-- jumlah mie pembelian menu mie ayam spesial -->
           <div class="form-group position-relative">
@@ -170,8 +179,8 @@ if (isset($status)) {
           <!-- harga Bakso spesial -->
         <div class="form-group position-relative">
           <span class="form-icon text-success">Rp.</span>
-          <label>Harga Bakso spesial</label>
-          <input type="number" class="form-control"  value="18.000" readonly />
+          <label for="harga-bakso">Harga Bakso spesial</label>
+          <input type="number" class="form-control"  id="harga-bakso" name="harga-bakso" />
         </div>
 
          <!-- jumlah mie pembelian menu Bakso spesial -->
@@ -210,19 +219,19 @@ if (isset($status)) {
         <div class="col-md-5 mt-3">
           <!-- harga mie ayam -->
           <h5 class="d-inline">Harga Mie Ayam spesial : </h5>
-          <strong>Rp.20.000</strong>
+          <strong>Rp.<?= formatRp($getDataMieAyamBakso['1819123_harga_mieayam']); ?></strong>
           <br><br>
           <!-- harga bakso -->
           <h5 class="d-inline">Harga Bakso spesial : </h5>
-          <strong>Rp.18.000</strong>
+          <strong>Rp.<?= formatRp($getDataMieAyamBakso['1819123_harga_bakso']); ?></strong>
           <hr class="pembayaran">
           <!-- jumlah mie ayam -->
           <h5 class="d-inline">Jumlah Pembelian Mie Ayam spesial : </h5>
           <strong><?= $getDataMieAyamBakso['1819123_jumlah_mieayam']; ?></strong>
           <?php 
-            if ($getDataMieAyamBakso['1819123_jumlah_mieayam'] >= 5 && $getDataMieAyamBakso['1819123_jumlah_mieayam'] < 10) {
+            if ($getDataMieAyamBakso['1819123_jumlah_mieayam'] >= 6 && $getDataMieAyamBakso['1819123_jumlah_mieayam'] < 11) {
               echo '<small class="text-secondary">diskon 5%</small>';
-            } else if ($getDataMieAyamBakso['1819123_jumlah_mieayam'] >= 10) {
+            } else if ($getDataMieAyamBakso['1819123_jumlah_mieayam'] >= 11) {
               echo '<small class="text-secondary">diskon 10%</small>';
             }
           ?>
@@ -231,9 +240,9 @@ if (isset($status)) {
           <h5 class="d-inline">Jumlah Pembelian Bakso spesial : </h5>
           <strong><?= $getDataMieAyamBakso['1819123_jumlah_bakso']; ?></strong>
           <?php 
-            if ($getDataMieAyamBakso['1819123_jumlah_bakso'] >= 5 && $getDataMieAyamBakso['1819123_jumlah_bakso'] < 10) {
+            if ($getDataMieAyamBakso['1819123_jumlah_bakso'] >= 6 && $getDataMieAyamBakso['1819123_jumlah_bakso'] < 11) {
               echo '<small class="text-secondary">diskon 5%</small>';
-            } else if ($getDataMieAyamBakso['1819123_jumlah_bakso'] >= 10) {
+            } else if ($getDataMieAyamBakso['1819123_jumlah_bakso'] >= 11) {
               echo '<small class="text-secondary">diskon 10%</small>';
             }
           ?>
@@ -241,17 +250,17 @@ if (isset($status)) {
           <!-- total pembayaran -->
           <hr class="pembayaran">
           <h5 class="d-inline">Total Pembayaran : </h5>
-          <strong>Rp.<?= $getDataMieAyamBakso['181923_total_harga']; ?></strong>
+          <strong>Rp.<?= formatRp($getDataMieAyamBakso['total_pembayaran']); ?></strong>
 
           <!-- uang pembayaran -->
           <br><br>
           <h5 class="d-inline">Uang Pembayaran : </h5>
-          <strong>Rp.<?= $getDataMieAyamBakso['1819123_uang_pembayaran']; ?></strong>
+          <strong>Rp.<?= formatRp($getDataMieAyamBakso['1819123_uang_pembayaran']); ?></strong>
 
           <!-- uang kembalian -->
           <br><br>
           <h5 class="d-inline">Uang Kembalian : </h5>
-          <strong>Rp.<?= $uangKembalian; ?></strong>
+          <strong>Rp.<?= formatRp($uangKembalian); ?></strong>
           <hr class="pembayaran">
           <button type="button" class="btn btn-sm btn-success">
             <!-- cetak excel -->

@@ -49,9 +49,9 @@ function startHTML($title = '', $includeCSS = '')
             }
             body {
                 font-family: "Montserrat", sans-serif;
-                background-image: url(iraina.jpeg);
-                background-repeat: no-repeat;
-                background-size: cover;
+                // background-image: url(iraina.jpeg);
+                // background-repeat: no-repeat;
+                // background-size: cover;
             }
             .form-control:focus {
                 border-color: #28a745 !important;
@@ -306,19 +306,110 @@ function cariNota($cari)
 }
 
 // tambah data mie ayam & bakso
-function tambahDataMieAyamBakso($jumlahMieAyam, $jumlahBakso, $totalBayar, $uangPembayaran)
+function tambahDataMieAyamBakso($data = [])
 {
-    $query = "INSERT INTO `1819123_mieayam_bakso`(`1819123_id`, `1819123_jumlah_mieayam`, `1819123_jumlah_bakso`, `181923_total_harga`, `1819123_uang_pembayaran`) VALUES (NULL, '$jumlahMieAyam', '$jumlahBakso', '$totalBayar', '$uangPembayaran')";
+    // inisialisasi dulu
+    $jumlahMieAyam = (int) $data['jumlah_mieayam'];
+    $jumlahBakso = (int) $data['jumlah_bakso'];
+    $hargaMieAyam = (int) $data['harga_mieayam'];
+    $hargaBakso = (int) $data['harga_bakso'];
+    $uangPembayaran = (int) $data['uang_pembayaran'];
+    $query = "INSERT INTO `1819123_mieayam_bakso`(`1819123_id`, `1819123_jumlah_mieayam`, `1819123_jumlah_bakso`, `1819123_harga_mieayam`, `1819123_harga_bakso`, `1819123_uang_pembayaran`) VALUES (NULL, $jumlahMieAyam, $jumlahBakso, $hargaMieAyam, $hargaBakso, $uangPembayaran)";
     return query($query);
 }
-function getDataMieAyamBakso($jumlahMieAyam, $jumlahBakso, $totalBayar, $uangPembayaran)
+
+function getDataMieAyamBakso($data = [])
 {
-    $query = "SELECT * FROM `1819123_mieayam_bakso` WHERE `1819123_jumlah_mieayam` = '$jumlahMieAyam' AND `1819123_jumlah_bakso` = '$jumlahBakso' AND `181923_total_harga` = '$totalBayar' AND `1819123_uang_pembayaran` = '$uangPembayaran'";
-    return fetchAssoc(query($query));
+    // inisialisasi dulu
+    $jumlahMieAyam = (int) $data['jumlah_mieayam'];
+    $jumlahBakso = (int) $data['jumlah_bakso'];
+    $hargaMieAyam = (int) $data['harga_mieayam'];
+    $hargaBakso = (int) $data['harga_bakso'];
+    $uangPembayaran = (int) $data['uang_pembayaran'];
+
+    $totalHargaMieAyam = 0;
+    $totalHargaBakso = 0;
+    $totalPembayaran = 0;
+
+    // diskon mie ayam
+    // 5% jika pembelian diatas 5
+    if ($jumlahMieAyam >= 6 && $jumlahMieAyam <= 10) {
+        $totalHargaMieAyam = $hargaMieAyam * $jumlahMieAyam - ($hargaMieAyam * $jumlahMieAyam * 5) / 100;
+    } 
+    // 10% jika pembelian diatas 10
+    else if ($jumlahMieAyam >= 11) {
+        $totalHargaMieAyam = $hargaMieAyam * $jumlahMieAyam - ($hargaMieAyam * $jumlahMieAyam * 10) / 100;
+    } 
+    // harga normal
+    else {
+        $totalHargaMieAyam = $hargaMieAyam * $jumlahMieAyam;
+    }
+
+    // diskon bakso
+    // 5% jika pembelian diatas 5
+    if ($jumlahBakso >= 6 && $jumlahBakso <= 10) {
+        $totalHargaBakso = $hargaBakso * $jumlahBakso - ($hargaBakso * $jumlahBakso * 5) / 100;
+    } 
+    // 10% jika pembelian diatas 10
+    else if ($jumlahBakso >= 11) {
+        $totalHargaBakso = $hargaBakso * $jumlahBakso - ($hargaBakso * $jumlahBakso * 10) / 100;
+    } 
+    // harga normal
+    else {
+        $totalHargaBakso = $hargaBakso * $jumlahBakso;
+    }
+    $totalPembayaran = $totalHargaMieAyam + $totalHargaBakso;
+
+    $query = "SELECT *, $totalPembayaran AS 'total_pembayaran' FROM `1819123_mieayam_bakso` WHERE `1819123_jumlah_mieayam` = $jumlahMieAyam AND `1819123_jumlah_bakso` = $jumlahBakso AND `1819123_harga_mieayam` = $hargaMieAyam AND `1819123_harga_bakso` = $hargaBakso AND `1819123_uang_pembayaran` = '$uangPembayaran'";
+    return fetchAssoc(query($query))[0];
 }
 
 function getDataMieAyamBaksoById($idMieAyamBakso)
 {
-    $query = "SELECT `1819123_jumlah_mieayam`, `1819123_jumlah_bakso`, `181923_total_harga`, `1819123_uang_pembayaran`, `1819123_uang_pembayaran` - `181923_total_harga` AS `uang_kembalian` FROM `1819123_mieayam_bakso` WHERE `1819123_id` = '$idMieAyamBakso'";
-    return fetchAssoc(query($query));
+    $query = "SELECT `1819123_jumlah_mieayam`, `1819123_jumlah_bakso`, `1819123_harga_mieayam`, `1819123_harga_bakso`, `1819123_uang_pembayaran` FROM `1819123_mieayam_bakso` WHERE `1819123_id` = '$idMieAyamBakso'";
+    $result = fetchAssoc(query($query))[0];
+
+    $totalHargaMieAyam = 0;
+    $totalHargaBakso = 0;
+    $totalPembayaran = 0;
+
+    // diskon mie ayam
+    // 5% jika pembelian diatas 5
+    if ($result['1819123_jumlah_mieayam'] >= 6 && $result['1819123_jumlah_mieayam'] <= 10) {
+        $totalHargaMieAyam = $result['1819123_harga_mieayam'] * $result['1819123_jumlah_mieayam'] - ($result['1819123_harga_mieayam'] * $result['1819123_jumlah_mieayam'] * 5) / 100;
+    } 
+    // 10% jika pembelian diatas 10
+    else if ($result['1819123_jumlah_mieayam'] >= 11) {
+        $totalHargaMieAyam = $result['1819123_harga_mieayam'] * $result['1819123_jumlah_mieayam'] - ($result['1819123_harga_mieayam'] * $result['1819123_jumlah_mieayam'] * 10) / 100;
+    } 
+    // harga normal
+    else {
+        $totalHargaMieAyam = $result['1819123_harga_mieayam'] * $result['1819123_jumlah_mieayam'];
+    }
+
+    // diskon bakso
+    // 5% jika pembelian diatas 5
+    if ($result['1819123_jumlah_bakso'] >= 6 && $result['1819123_jumlah_bakso'] <= 10) {
+        $totalHargaBakso = $result['1819123_harga_bakso'] * $result['1819123_jumlah_bakso'] - ($result['1819123_harga_bakso'] * $result['1819123_jumlah_bakso'] * 5) / 100;
+    } 
+    // 10% jika pembelian diatas 10
+    else if ($result['1819123_jumlah_bakso'] >= 11) {
+        $totalHargaBakso = $result['1819123_harga_bakso'] * $result['1819123_jumlah_bakso'] - ($result['1819123_harga_bakso'] * $result['1819123_jumlah_bakso'] * 10) / 100;
+    } 
+    // harga normal
+    else {
+        $totalHargaBakso = $result['1819123_harga_bakso'] * $result['1819123_jumlah_bakso'];
+    }
+    $totalPembayaran = $totalHargaMieAyam + $totalHargaBakso;
+    $uangPembayaran = (int) $result['1819123_uang_pembayaran'];
+    $uangKembalian = $uangPembayaran - $totalPembayaran;
+    return [
+        'harga_mieayam' => $result['1819123_harga_mieayam'],
+        'harga_bakso' => $result['1819123_harga_bakso'],
+        'jumlah_mieayam' => $result['1819123_jumlah_mieayam'],
+        'jumlah_bakso' => $result['1819123_jumlah_bakso'],
+        'total_pembayaran' => $totalPembayaran,
+        'uang_pembayaran' => $result['1819123_uang_pembayaran'],
+        'uang_kembalian' => $uangKembalian
+    ];
 }

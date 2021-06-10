@@ -69,9 +69,9 @@ hr.header {
           <h5 class="d-inline">Jumlah Pembelian Mie Ayam spesial : </h5>
           <strong><?= $getDataMieAyamBaksoById['1819123_jumlah_mieayam']; ?></strong>
           <?php 
-            if ($getDataMieAyamBaksoById['1819123_jumlah_mieayam'] >= 5 && $getDataMieAyamBaksoById['1819123_jumlah_mieayam'] < 10) {
+            if ($getDataMieAyamBaksoById['1819123_jumlah_mieayam'] >= 6 && $getDataMieAyamBaksoById['1819123_jumlah_mieayam'] < 11) {
               echo '<small class="text-secondary">diskon 5%</small>';
-            } else if ($getDataMieAyamBaksoById['1819123_jumlah_mieayam'] >= 10) {
+            } else if ($getDataMieAyamBaksoById['1819123_jumlah_mieayam'] >= 11) {
               echo '<small class="text-secondary">diskon 10%</small>';
             }
           ?>

@@ -14,7 +14,7 @@ if (!isset($_GET['id'])) {
 $idMieAyamBakso = filter($_GET['id']);
 
 // get data mie ayam bakso berdasarkan id
-$getDataMieAyamBaksoById = getDataMieAyamBaksoById($idMieAyamBakso)[0];
+$getDataMieAyamBaksoById = getDataMieAyamBaksoById($idMieAyamBakso);
 
 // kalau tidak ada data nya pindah halaman menu
 if (!$getDataMieAyamBaksoById) {
@@ -56,30 +56,30 @@ hr.header {
         <div class="colom-5 mt-3">
           <!-- harga mie ayam -->
           <h5 class="d-inline">Harga Mie Ayam spesial : </h5>
-          <strong>Rp.20.000</strong>
+          <strong>Rp.<?= formatRp($getDataMieAyamBaksoById['harga_mieayam']); ?></strong>
           <br><br>
           <!-- harga bakso -->
           <h5 class="d-inline">Harga Bakso spesial : </h5>
-          <strong>Rp.18.000</strong>
+          <strong>Rp.<?= formatRp($getDataMieAyamBaksoById['harga_bakso']); ?></strong>
           <hr class="pembayaran">
           <!-- jumlah mie ayam -->
           <h5 class="d-inline">Jumlah Pembelian Mie Ayam spesial : </h5>
-          <strong><?= $getDataMieAyamBaksoById['1819123_jumlah_mieayam']; ?></strong>
+          <strong>.<?= formatRp($getDataMieAyamBaksoById['jumlah_mieayam']); ?></strong>
           <?php 
-            if ($getDataMieAyamBaksoById['1819123_jumlah_mieayam'] >= 5 && $getDataMieAyamBaksoById['1819123_jumlah_mieayam'] < 10) {
+            if ($getDataMieAyamBaksoById['jumlah_mieayam'] >= 6 && $getDataMieAyamBaksoById['jumlah_mieayam'] < 11) {
               echo '<small class="text-secondary">diskon 5%</small>';
-            } else if ($getDataMieAyamBaksoById['1819123_jumlah_mieayam'] >= 10) {
+            } else if ($getDataMieAyamBaksoById['jumlah_mieayam'] >= 11) {
               echo '<small class="text-secondary">diskon 10%</small>';
             }
           ?>
           <!-- jumlah bakso -->
           <br><br>
           <h5 class="d-inline">Jumlah Pembelian Bakso spesial : </h5>
-          <strong><?= $getDataMieAyamBaksoById['1819123_jumlah_bakso']; ?></strong>
+          <strong><?= $getDataMieAyamBaksoById['jumlah_bakso']; ?></strong>
           <?php 
-            if ($getDataMieAyamBaksoById['1819123_jumlah_bakso'] >= 5 && $getDataMieAyamBaksoById['1819123_jumlah_bakso'] < 10) {
+            if ($getDataMieAyamBaksoById['jumlah_bakso'] >= 6 && $getDataMieAyamBaksoById['jumlah_bakso'] < 11) {
               echo '<small class="text-secondary">diskon 5%</small>';
-            } else if ($getDataMieAyamBaksoById['1819123_jumlah_bakso'] >= 10) {
+            } else if ($getDataMieAyamBaksoById['jumlah_bakso'] >= 11) {
               echo '<small class="text-secondary">diskon 10%</small>';
             }
           ?>
@@ -87,17 +87,17 @@ hr.header {
           <!-- total pembayaran -->
           <hr class="pembayaran">
           <h5 class="d-inline">Total Pembayaran : </h5>
-          <strong>Rp.<?= $getDataMieAyamBaksoById['181923_total_harga']; ?></strong>
+          <strong>Rp.<?= formatRp($getDataMieAyamBaksoById['total_pembayaran']); ?></strong>
 
           <!-- uang pembayaran -->
           <br><br>
           <h5 class="d-inline">Uang Pembayaran : </h5>
-          <strong>Rp.<?= $getDataMieAyamBaksoById['1819123_uang_pembayaran']; ?></strong>
+          <strong>Rp.<?= formatRp($getDataMieAyamBaksoById['uang_pembayaran']); ?></strong>
 
           <!-- uang kembalian -->
           <br><br>
           <h5 class="d-inline">Uang Kembalian : </h5>
-          <strong>Rp.<?= $getDataMieAyamBaksoById['uang_kembalian']; ?></strong>
+          <strong>Rp.<?= formatRp($getDataMieAyamBaksoById['uang_kembalian']); ?></strong>
         </div>
       <?php endif; ?>
   </div>
